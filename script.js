@@ -38,6 +38,7 @@ fetch("footer.html")
 // --- Back to top ---
 const backToTopButton = document.getElementById("back-to-top");
 const circle = document.querySelector(".progress-ring__circle");
+
 if (circle) {
   const radius = circle.r.baseVal.value;
   const circumference = 2 * Math.PI * radius;
@@ -47,6 +48,7 @@ if (circle) {
     const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrollPercent = scrollTop / scrollHeight;
     const offset = circumference - scrollPercent * circumference;
+
     circle.style.strokeDashoffset = offset;
     backToTopButton.style.display = scrollTop > 100 ? "flex" : "none";
   });
@@ -56,19 +58,22 @@ if (circle) {
   });
 }
 
-// --- Scrollspy links ---
+// --- Scrollspy ---
 const navLinks = document.querySelectorAll(".nav-link");
+
 window.addEventListener("scroll", () => {
   const scrollPos = window.scrollY + 200;
+
   document.querySelectorAll("section").forEach(section => {
     if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
       navLinks.forEach(link => link.classList.remove("active"));
-      document.querySelector(`a[href="#${section.id}"]`)?.classList.add("active");
+      const activeLink = document.querySelector(`a[href="#${section.id}"]`);
+      if (activeLink) activeLink.classList.add("active");
     }
   });
 });
 
-// --- VERSION SECOURS : ACTUS LOCALES (PAS DE SERVEUR, PAS DE MONGODB) ---
+// --- VERSION SECOURS : ACTUS LOCALES ---
 window.addEventListener("DOMContentLoaded", () => {
   const actusList = document.getElementById("actus-list");
   const form = document.getElementById("add-actu-form");
@@ -81,12 +86,17 @@ window.addEventListener("DOMContentLoaded", () => {
     background:rgba(0,0,0,0.85); justify-content:center; align-items:center;
     z-index:9999; cursor:pointer;
   `;
+
   const lbImg = document.createElement("img");
   lbImg.id = "lightbox-img";
   lbImg.style.cssText = "max-width:90%; max-height:90%; border-radius:10px;";
+
   lightbox.appendChild(lbImg);
   document.body.appendChild(lightbox);
-  lightbox.addEventListener("click", () => (lightbox.style.display = "none"));
+
+  lightbox.addEventListener("click", () => {
+    lightbox.style.display = "none";
+  });
 
   function enableLightbox(img) {
     img.style.cursor = "pointer";
@@ -96,7 +106,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Actus locales pour la version secours ---
+  // --- Actus locales ---
   const localActus = [
     {
       author: "VolleyBall Dompierre",
@@ -104,10 +114,10 @@ window.addEventListener("DOMContentLoaded", () => {
       image: null,
       date: new Date(),
       _id: "1"
-    },
+    }
   ];
 
-  // --- Créer une carte d'actu ---
+  // --- Création d'une carte ---
   function createActuCard(author, content, image = null, date = null) {
     const card = document.createElement("div");
     card.classList.add("card", "card-actu", "p-3", "mb-3");
@@ -123,7 +133,7 @@ window.addEventListener("DOMContentLoaded", () => {
       <div class="d-flex justify-content-between align-items-center mb-2">
         <div><strong>${author}</strong> <small class="text-muted">${dateStr}</small></div>
       </div>
-      <p style="white-space: pre-wrap;">${content}</p>
+      <p>${content}</p>
       ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
     `;
 
@@ -133,7 +143,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (imgEl) enableLightbox(imgEl);
   }
 
-  // --- Charger les actus locales ---
+  // --- Chargement des actus ---
   function loadActus() {
     actusList.innerHTML = "";
     localActus.forEach(a => {
@@ -143,7 +153,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   loadActus();
 
-  // --- Désactiver le formulaire ---
+  // --- Désactivation du formulaire ---
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     alert("Version de secours : l’ajout d’actus est désactivé.");
