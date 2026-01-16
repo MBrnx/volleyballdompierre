@@ -1,0 +1,407 @@
+body {
+    font-family: Arial, sans-serif;
+
+    /* Fond principal */
+    background-image: url('images/LogoDompierre.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 70%;
+    background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.6); /* voile clair pour lisibilité du texte */
+  z-index: -1;
+}
+
+h1 {
+  text-shadow: 1px 1px rgba(0,0,0,0.7);
+}
+
+.nav-link:hover {
+    color: blue;
+    transition: color 0.3s;
+}
+
+section h2 {
+  color: #007bff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+section {
+    scroll-margin-top: 30px;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 30px;
+    background-color: #e2e2e2;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0.95;
+}
+
+section#accueil {   
+    scroll-margin-top: 15px;
+}
+
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: #007bff;
+  font-size: 24px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+#back-to-top:hover {
+  transform: scale(1.1);
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+.progress-ring__background {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: 4;
+}
+
+.progress-ring__circle {
+  fill: none;
+  stroke: #007bff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 164;
+  stroke-dashoffset: 164;
+  transition: stroke-dashoffset 0.2s;
+}
+
+#back-to-top span {
+  position: relative;
+  z-index: 2;
+}
+
+#texte_en-tete p {
+    font-size: 14pt;
+}
+
+#texte_en-tete button {
+    margin-bottom: 15px;
+}
+
+#image_en-tete img {
+    margin-bottom: 15px;
+}
+
+/* --- Navbar globale --- */
+.navbar {
+  background-color: #198754; /* vert bg-success */
+  border-radius: 10px;
+  min-height: 150px; /* hauteur desktop */
+  margin: 15px;
+  padding: 0 20px; /* espace interne pour aérer un peu */
+  display: flex;
+  align-items: center;
+}
+
+/* Logo responsive */
+.navbar-brand {
+  margin-left: 10px; /* décale légèrement le logo du bord */
+}
+
+.navbar-brand img {
+  height: 120px;
+  width: auto;
+  object-fit: contain;
+  transition: height 0.3s;
+}
+
+/* Bouton hamburger */
+.navbar-toggler {
+  margin-right: 10px; /* évite qu'il colle au bord */
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none; /* supprime le contour bleu Bootstrap */
+}
+
+/* Fond visible quand le menu burger est ouvert */
+.navbar-collapse {
+  background-color: #198754; /* même vert que bg-success */
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px; /* espace entre le bouton et les liens */
+}
+
+/* Liens du menu */
+.navbar-nav .nav-link {
+  color: white !important;
+  font-size: 1.25rem;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 5px;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff !important;
+}
+
+.navbar-nav .nav-link.active {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #fff !important;
+}
+
+/* --- Mobile / tablettes (≤991px) --- */
+@media (max-width: 991px) {
+  .navbar {
+    min-height: 70px; /* légèrement plus grande pour aligner les icônes */
+    padding: 0 15px;
+  }
+
+  .navbar-brand img {
+    height: 55px;
+  }
+
+  .navbar-toggler {
+    margin-right: 15px;
+  }
+
+  .navbar-collapse {
+    padding: 15px;
+    margin-top: 8px; /* aligne mieux le menu déroulant */
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* --- Animation et transitions --- */
+.navbar-nav .nav-link {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Horaires --- */
+div.card.card-horaire {
+  background-color: #e9f5ef;
+  border-left: 4px solid #28a745;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: transform 0.2s ease;
+}
+
+div.card.card-horaire:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Contact --- */
+div.card-contact {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+div.card-contact ul.contact-list li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+h4.section-title {
+  border-bottom: 2px solid #28a745;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+
+@media (max-width: 991px) {
+  #navbarNav {
+    position: absolute;
+    top: 110px;
+    right: 10px;
+    width: 250px;
+    background-color: #198754;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    padding: 10px;
+    z-index: 1050;
+
+    transform-origin: top;
+    transform: scaleY(0);
+    opacity: 0;
+    transition: none; /* ouverture instantanée */
+  }
+
+  #navbarNav.show {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+  #navbarNav.closing {
+    transition: transform 0.25s ease-in, opacity 0.25s ease-in; /* fermeture fluide */
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  #navbarNav.collapsing {
+    height: auto !important;
+  }
+}
+
+.card-actu p {
+    white-space: pre-wrap;
+}
+
+img[alt="Facebook"] {
+    height: 25px;
+    width: auto;
+    border-radius: 3px;
+}
+
+/* Style général des publications */
+.card-actu {
+    background-color: #f8f9fa; /* fond clair gris/blanc cassé */
+    border: 1px solid #ddd;    /* bordure discrète */
+    border-radius: 10px;        /* coins arrondis */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* légère ombre */
+    padding: 15px;
+}
+
+/* En-tête avec auteur et date */
+.card-actu > div.d-flex:first-child {
+    background-color: #e9ecef;  /* fond légèrement plus foncé pour l'en-tête */
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Texte de la publication */
+.card-actu p {
+    background-color: rgb(248, 248, 243); /* fond gris très clair pour le texte */
+    padding: 10px;
+    border-radius: 6px;
+}
+
+/* Image si présente */
+.card-actu img {
+    background-color: rgb(248, 248, 243); /* optionnel : même fond que le texte */
+    padding: 5px;
+    border-radius: 6px;
+    max-height: 400px; /* limiter la taille si besoin */
+    object-fit: cover;
+}
+
+.card-actu img:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s;
+}
+
+#lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+#carouselEquipe .carousel-item img {
+  height: 70vh;
+  object-fit: cover;
+}
+
+#carouselEquipe {
+  max-width: 800px;   /* largeur maximale du carrousel */
+  margin: 0 auto;     /* centre le carrousel */
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+#galerie {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Ajustement pour petits écrans */
+@media (max-width: 767px) {
+  #carouselEquipe .carousel-item img {
+    height: 40vh;
+  }
+}
+
+.table {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table thead {
+  background-color: #198754;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #198754;
+}
+
+.video-wrapper {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  max-width: 100%;
+  width: 800px;
+  margin: 0 auto;
+}
+
+.video-wrapper .fb-video, 
+.video-wrapper iframe {
+  border-radius: 15px;
+  width: 100% !important;
+}
