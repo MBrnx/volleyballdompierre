@@ -29,31 +29,42 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #198754 0%, #145c3a 100%);
-            color: white;
+            background-color: #f4f4f4;
+            color: #333;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 20px;
+            font-family: Arial, sans-serif;
+
+            /* Logo en fond */
+            background-image: url('images/LogoDompierre.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 300px;
+            opacity: 0.95;
         }
 
         .error-box {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.85);
             padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(6px);
-            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
         }
 
         .error-title {
             font-size: 4rem;
             font-weight: 800;
+            margin-bottom: 10px;
+            color: #198754;
         }
 
         .error-subtitle {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 25px;
         }
 
@@ -68,9 +79,9 @@
 
     <div class="error-box">
         <div class="error-title">404</div>
-        <div class="error-subtitle">Oups… Cette page n’existe pas.</div>
+        <div class="error-subtitle">La page que vous cherchez n’existe pas.</div>
 
-        <a href="index.html" class="btn btn-light btn-home">
+        <a href="index.html" class="btn btn-success btn-home">
             Retour à l’accueil
         </a>
     </div>
