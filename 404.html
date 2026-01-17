@@ -35,25 +35,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
             padding: 20px;
             font-family: Arial, sans-serif;
-
-            /* Logo en fond */
-            background-image: url('images/LogoDompierre.png');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 300px;
-            opacity: 0.95;
         }
 
-        .error-box {
-            background: rgba(255, 255, 255, 0.85);
+        .container-404 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            max-width: 450px;
+            max-width: 900px;
             width: 100%;
+            gap: 40px;
+        }
+
+        .text-zone {
+            flex: 1;
         }
 
         .error-title {
@@ -64,26 +64,51 @@
         }
 
         .error-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 25px;
         }
 
-        .btn-home {
-            font-size: 1.1rem;
-            padding: 12px 25px;
+        .logo-zone {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-zone img {
+            max-width: 300px;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container-404 {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-zone img {
+                max-width: 200px;
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="error-box">
-        <div class="error-title">404</div>
-        <div class="error-subtitle">La page que vous cherchez n’existe pas.</div>
+    <div class="container-404">
+        <div class="text-zone">
+            <div class="error-title">404</div>
+            <div class="error-subtitle">La page que vous cherchez n’existe pas.</div>
 
-        <a href="index.html" class="btn btn-success btn-home">
-            Retour à l’accueil
-        </a>
+            <a href="index.html" class="btn btn-success btn-lg">
+                Retour à l’accueil
+            </a>
+        </div>
+
+        <div class="logo-zone">
+            <img src="images/LogoDompierre.png" alt="Logo du club">
+        </div>
     </div>
 
 </body>
