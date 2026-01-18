@@ -29,10 +29,14 @@
 
   <style>
     body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      height: 100vh;
+      background: url('images/404.png') no-repeat center center;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      position: relative;
     }
 
     .logo {
@@ -40,60 +44,49 @@
       top: 20px;
       left: 20px;
       width: 80px;
+      z-index: 10;
     }
 
-    .container-404 {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100vh;
-      padding: 60px;
-      box-sizing: border-box;
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 90%;
     }
 
-    .text-zone {
-      max-width: 500px;
-    }
-
-    .text-zone h1 {
-      font-size: 4rem;
+    .content h1 {
+      font-size: 5rem;
       font-weight: bold;
-      color: #198754;
+      margin-bottom: 20px;
     }
 
-    .text-zone p {
-      font-size: 1.2rem;
-      margin: 20px 0;
-      color: #333;
+    .content p {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
     }
 
     .btn-home {
-      font-size: 1.1rem;
-      padding: 12px 25px;
-    }
-
-    .image-zone img {
-      max-width: 100%;
-      height: auto;
+      font-size: 1.2rem;
+      padding: 12px 30px;
     }
 
     @media (max-width: 768px) {
-      .container-404 {
-        flex-direction: column;
-        text-align: center;
-        padding: 40px 20px;
+      .content h1 {
+        font-size: 3.5rem;
       }
 
-      .text-zone h1 {
-        font-size: 3rem;
+      .content p {
+        font-size: 1.2rem;
       }
 
       .logo {
         width: 60px;
-      }
-
-      .image-zone {
-        margin-top: 30px;
       }
     }
   </style>
@@ -103,16 +96,10 @@
 
   <img src="images/LogoDompierre.png" alt="Logo du club" class="logo">
 
-  <div class="container-404">
-    <div class="text-zone">
-      <h1>404</h1>
-      <p>Oups… La page que vous cherchez n’existe pas ou a été déplacée.</p>
-      <a href="index.html" class="btn btn-success btn-home">Retour à l’accueil</a>
-    </div>
-
-    <div class="image-zone">
-      <img src="images/404.png" alt="Illustration 404">
-    </div>
+  <div class="content">
+    <h1>404</h1>
+    <p>Oups… La page que vous cherchez n’existe pas ou a été déplacée.</p>
+    <a href="index.html" class="btn btn-light btn-home">Retour à l’accueil</a>
   </div>
 
 </body>
