@@ -73,7 +73,7 @@ window.addEventListener("scroll", () => {
   });
 });
 
-// --- VERSION SECOURS : ACTUS LOCALES ---
+// --- ACTUS LOCALES ---
 window.addEventListener("DOMContentLoaded", () => {
   const actusList = document.getElementById("actus-list");
   const form = document.getElementById("add-actu-form");
@@ -106,66 +106,69 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Actus locales ---
-  const localActus = [
-    {
-      author: "VolleyBall Dompierre",
-      content: "Bienvenue sur notre site du VolleyBall Dompierre !",
-      image: null,
-      date: new Date(new Date().setDate(new Date().getDate() -2)),
-      _id: "1"
-    },
-    {
-      author: "VolleyBall Dompierre",
-      content: "B comme BIEN\n🟢⚫️ Ce samedi nos jeunes étaient présents sur le parquet pour le deuxième tour des sélections. Vous avez donné le meilleur de vous même pour le plus grand bonheur de vos éducateurs.\nOn attend les résultats avec impatience pour que l'aventure se poursuivre pour le plus grand nombre d'entre vous.\n🟢⚫️Dimanche en déplacement à Templeuve , notre équipe filles devaient confirmer leur bonne forme actuelle.\nUn premier set très disputé, menées 16/22 nos joueuses ont réussi l'exploit de marquer 9 points tout en n'en concédant qu'un seul : 25/23. Un deuxième set avec le même niveau d'exigence 25/21.\nLe troisième set très bien négocié pour éviter toute mauvaise surprise : 25/17.\nUN GRAND MATCH.\n🟢⚫️Pas de coup double comme espéré. La C s'est inclinée 0/3. (14/25,17/25,16/25). Ces scores ne reflètent pas votre bonne prestation, vous avez chuté à Avesnelles mais une grande équipe doit se relever.\nVOUS ETE DEJA DEBOUT.\n🟢⚫️La B nous a offert une superbe victoire tout en réalisant un match de haut niveau.\nUn premier set serré, Dompierre, toujours devant mais de peu pour ensuite se détacher en fin de set : 25/19\nAu deuxième set avec un sans faute dans tous les secteurs de jeu : 25/12\nLe troisième set souvent le plus difficile confirme cette règle. Avec un suspens mémorable Dompierre court après le score tout au long du set pour ensuite arracher la victoire de justesse : 25/23.\nPar votre prestation vous avez enchanté les nombreux supporters.\nB COMME BIEN.\nBonne semaine.\nPhilippe.",
-      image: null,
-      date: new Date(new Date().setDate(new Date().getDate())),
-      _id: "2"
-    },
-  ];
+  // --- Chargement des actus depuis Google Sheets ---
+  async function loadActus() {
+    const data = await loadData("actualites");
+
+    // Trier du plus récent au plus ancien
+    data.sort((a, b) => {
+      const da = new Date(a.date.split("/").reverse().join("-"));
+      const db = new Date(b.date.split("/").reverse().join("-"));
+      return db - da;
+    });
+
+    actusList.innerHTML = "";
+
+    data.forEach(a => {
+      createActuCard(a.author, a.content, a.image, a.date);
+    });
+  }
 
   // --- Création d'une carte ---
-  function createActuCard(author, content, image = null, date = null) {
+    function parseFrenchDate(str) {
+    if (!str) return new Date();
+    const [day, month, year] = str.split("/");
+    return new Date(`${year}-${month}-${day}`);
+    }
+
+    function createActuCard(author, content, image = null, date = null) {
     const card = document.createElement("div");
     card.classList.add("card", "card-actu", "p-3", "mb-3");
 
-    const dateObj = date ? new Date(date) : new Date();
+    const dateObj = parseFrenchDate(date);
     const dateStr = dateObj.toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
+        day: "numeric",
+        month: "long",
+        year: "numeric"
     });
 
     card.innerHTML = `
-      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
         <div><strong>${author}</strong> <small class="text-muted">${dateStr}</small></div>
-      </div>
-      <p>${content}</p>
-      ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
+        </div>
+        <p>${content}</p>
+        ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
     `;
 
     actusList.append(card);
 
     const imgEl = card.querySelector("img");
     if (imgEl) enableLightbox(imgEl);
-  }
+    }
 
-  // --- Chargement des actus ---
-  function loadActus() {
-    actusList.innerHTML = "";
-    localActus.forEach(a => {
-      createActuCard(a.author, a.content, a.image, a.date);
-    });
-  }
 
   loadActus();
 
   // --- Désactivation du formulaire ---
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    alert("Version de secours : l’ajout d’actus est désactivé.");
-  });
+    if (form) {
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            alert("L’ajout d’actus est désactivé.");
+        });
+    }
+
 });
+
 
 function showSection(sectionId, btn) {
     document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
