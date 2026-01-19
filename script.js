@@ -126,10 +126,35 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // --- Création d'une carte ---
     function parseFrenchDate(str) {
-    if (!str) return new Date();
-    const [day, month, year] = str.split("/");
-    return new Date(`${year}-${month}-${day}`);
+        if (!str) return new Date();
+
+        // Format AAAA-MM-JJ → direct
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+            return new Date(str);
+        }
+
+        // Format JJ/MM/AAAA ou J/M/AAAA
+        if (str.includes("/")) {
+            const parts = str.split("/");
+            if (parts.length === 3) {
+            const [day, month, year] = parts;
+            return new Date(`${year}-${month.padStart(2,"0")}-${day.padStart(2,"0")}`);
+            }
+        }
+
+        // Format JJ-MM-AAAA
+        if (str.includes("-")) {
+            const parts = str.split("-");
+            if (parts.length === 3) {
+            const [day, month, year] = parts;
+            return new Date(`${year}-${month}-${day}`);
+            }
+        }
+
+        // Dernier recours : laisser JS deviner
+        return new Date(str);
     }
+
 
     function createActuCard(author, content, image = null, date = null) {
     const card = document.createElement("div");
