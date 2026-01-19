@@ -37,9 +37,9 @@
         script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net;
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         frame-src https://www.facebook.com https://connect.facebook.net;
+        connect-src 'self' https://opensheet.elk.sh;
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
 
@@ -64,42 +64,102 @@
 
     <!-- Boutons de navigation -->
     <div class="text-center mb-4">
-        <button class="btn btn-success m-2" onclick="showSection('avenir')">Matchs à venir</button>
-        <button class="btn btn-outline-success m-2" onclick="showSection('passes')">Matchs passés</button>
-        <button class="btn btn-outline-success m-2" onclick="showSection('resultats')">Résultats</button>
-        <button class="btn btn-outline-success m-2" onclick="showSection('evenements')">Événements</button>
+        <button class="btn btn-success m-2" data-section="avenir">Matchs à venir</button>
+        <button class="btn btn-outline-success m-2" data-section="resultats">Résultats</button>
+        <button class="btn btn-outline-success m-2" data-section="evenements">Événements</button>
+    </div>
+
+    <!-- FILTRES SIMPLES (toujours visibles) -->
+    <div id="zone-filtres" class="border rounded p-3 mb-4 bg-light" style="display:none;">
+
+        <h5 class="mb-3">Filtres</h5>
+
+        <!-- FILTRE ÉQUIPES -->
+        <h6 class="mb-2">Équipes</h6>
+        <div class="row">
+            <div class="col-6 col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre A" id="eqA" checked>
+                    <label class="form-check-label" for="eqA">Dompierre A</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre B" id="eqB" checked>
+                    <label class="form-check-label" for="eqB">Dompierre B</label>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre C" id="eqC" checked>
+                    <label class="form-check-label" for="eqC">Dompierre C</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre D" id="eqD" checked>
+                    <label class="form-check-label" for="eqD">Dompierre D</label>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input filter-equipe" type="checkbox" value="Féminines" id="eqF" checked>
+                    <label class="form-check-label" for="eqF">Féminines</label>
+                </div>
+            </div>
+
+            <div class="mt-3 text-end">
+                <button id="reset-filtres" class="btn btn-secondary btn-sm">
+                    Réinitialiser les filtres
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- FILTRE LIEU -->
+        <h6 class="mb-2">Lieu</h6>
+        <div class="d-flex flex-wrap gap-3">
+            <div class="form-check">
+                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuTous" value="tous" checked>
+                <label class="form-check-label" for="lieuTous">Tous</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuDom" value="domicile">
+                <label class="form-check-label" for="lieuDom">Domicile</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuExt" value="extérieur">
+                <label class="form-check-label" for="lieuExt">Extérieur</label>
+            </div>
+        </div>
+
+    </div>
+        
+    <hr>
+
+    <div class="text-center mb-3">
+        <button id="btn-filtres" class="btn btn-outline-primary">
+            ☰ Filtres
+        </button>
     </div>
 
     <!-- Matchs à venir -->
     <section id="avenir" class="section-content">
         <h2 class="mb-3">📅 Matchs à venir</h2>
-        <div class="list-group">
-            <!-- Tu pourras ajouter tes matchs ici -->
-        </div>
-    </section>
-
-    <!-- Matchs passés -->
-    <section id="passes" class="section-content" style="display:none;">
-        <h2 class="mb-3">📜 Matchs passés</h2>
-        <div class="list-group">
-            <!-- Matchs passés -->
-        </div>
+        <div class="list-group"></div>
     </section>
 
     <!-- Résultats -->
     <section id="resultats" class="section-content" style="display:none;">
         <h2 class="mb-3">🏆 Résultats des matchs</h2>
-        <div class="list-group">
-            <!-- Résultats -->
-        </div>
+        <div class="list-group"></div>
     </section>
 
     <!-- Événements -->
     <section id="evenements" class="section-content" style="display:none;">
         <h2 class="mb-3">🎉 Événements du club</h2>
-        <ul class="list-group">
-            <!-- Événements -->
-        </ul>
+        <ul class="list-group"></ul>
     </section>
 
 </main>
@@ -110,26 +170,6 @@
 
 <script src="script.js"></script>
 
-<!-- Script pour gérer les sections -->
-<script>
-function showSection(sectionId) {
-    // Masquer toutes les sections
-    document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
-
-    // Afficher la section choisie
-    document.getElementById(sectionId).style.display = 'block';
-
-    // Réinitialiser les boutons
-    document.querySelectorAll('main button').forEach(btn => {
-        btn.classList.remove('btn-success');
-        btn.classList.add('btn-outline-success');
-    });
-
-    // Activer le bouton cliqué
-    event.target.classList.remove('btn-outline-success');
-    event.target.classList.add('btn-success');
-}
-</script>
 
 </body>
 </html>
