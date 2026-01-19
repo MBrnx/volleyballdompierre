@@ -233,6 +233,7 @@ async function loadMatchsAvenir() {
     const data = await loadData("matchs_avenir");
     const filters = getFilters();
 
+    // Tri par date
     data.sort((a, b) => {
         const da = new Date(a.date.split("/").reverse().join("-"));
         const db = new Date(b.date.split("/").reverse().join("-"));
@@ -242,46 +243,60 @@ async function loadMatchsAvenir() {
     const container = document.querySelector("#avenir .list-group");
     container.innerHTML = "";
 
-    // Filtrage
+    // --- FILTRAGE ---
     const filtered = data.filter(row => {
         const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
         const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
-        if (!filters.equipes.some(eq => row.equipe.toLowerCase().includes(eq.toLowerCase()))) {
+        // équipe dans équipe OU adversaire
+        if (!filters.equipes.some(eq =>
+            row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
+            row.adversaire.toLowerCase().includes(eq.toLowerCase())
+        )) {
             return false;
         }
+
         if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
 
         return true;
     });
 
+    // --- AUCUN MATCH ---
     if (filtered.length === 0) {
         container.innerHTML = `
-            <li class="list-group-item text-center text-muted">
+            <div class="bg-light p-3 mt-3 border rounded text-center text-muted">
                 Aucun match à venir
-            </li>`;
+            </div>`;
         return;
     }
 
+    // --- AFFICHAGE PAR DATE ---
     let currentDate = "";
 
     filtered.forEach(row => {
         const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
         const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
+        // Nouveau jour → séparation + titre
         if (row.date !== currentDate) {
             currentDate = row.date;
+
             container.innerHTML += `
-                <div class="bg-light p-2 mt-3 border rounded">
-                    <strong>${currentDate}</strong>
+                <div class="day-separator mt-4 mb-2">
+                    <div class="day-line"></div>
+                    <h5 class="day-title text-primary">${currentDate}</h5>
+                    <div class="day-line"></div>
                 </div>`;
         }
 
+        // Carte de match
         container.innerHTML += `
-            <div class="list-group-item">
-                <h5>${row.equipe} – ${row.adversaire}</h5>
-                <p>${row.heure} — <em>${row.matchs || ""}</em> — <span class="text-muted">${domExt}</span></p>
-                <small>${row.lieu}</small>
+            <div class="match-card border rounded p-3 mb-2">
+                <h6 class="mb-1">${row.equipe} – ${row.adversaire}</h6>
+                <p class="mb-1 text-muted">
+                    ${row.heure} — <em>${row.matchs || ""}</em> — ${domExt}
+                </p>
+                <small class="text-secondary">${row.lieu}</small>
             </div>`;
     });
 }
@@ -306,7 +321,12 @@ async function loadResultats() {
         const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
         const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
-        if (!filters.equipes.includes(row.equipe)) return false;
+        if (!filters.equipes.some(eq =>
+            row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
+            row.adversaire.toLowerCase().includes(eq.toLowerCase())
+        )) {
+            return false;
+        }
         if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
 
         return true;
@@ -414,14 +434,15 @@ btnFiltres.addEventListener("click", () => {
 document.getElementById("reset-filtres").addEventListener("click", () => {
 
     // Réinitialiser les équipes
-    document.querySelectorAll(".filter-equipe").forEach(cb => cb.checked = true);
+    document.querySelectorAll(".filter-equipe").forEach(cb => {
+        cb.checked = true;
+        cb.dispatchEvent(new Event("change")); 
+    });
 
     // Réinitialiser le lieu
-    document.getElementById("lieuTous").checked = true;
-
-    // Recharger les listes
-    loadMatchsAvenir();
-    loadResultats();
+    const lieuTous = document.getElementById("lieuTous");
+    lieuTous.checked = true;
+    lieuTous.dispatchEvent(new Event("change")); 
 });
 
 // ----------------------

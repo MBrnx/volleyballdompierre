@@ -466,3 +466,33 @@ img[alt="Facebook"] {
     text-align: right;
     margin-top: 10px;
 }
+
+.match-date-header h5 {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.match-card {
+  background: #fdfdfd;
+  transition: box-shadow 0.2s ease;
+}
+.match-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.day-separator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.day-line {
+    flex: 1;
+    height: 1px;
+    background: #d0d0d0;
+}
+
+.day-title {
+    margin: 0;
+    font-weight: 600;
+}
