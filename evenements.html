@@ -70,71 +70,85 @@
     </div>
 
     <!-- FILTRES SIMPLES (toujours visibles) -->
-    <div id="zone-filtres" class="border rounded p-3 mb-4 bg-light" style="display:none;">
+    <div id="zone-filtres" class="filter-card" style="display:none;">
 
-        <h5 class="mb-3">Filtres</h5>
+        <div class="filter-header">
+            <h5>Filtres</h5>
+        </div>
 
-        <!-- FILTRE ÉQUIPES -->
-        <h6 class="mb-2">Équipes</h6>
-        <div class="row">
-            <div class="col-6 col-md-4">
-                <div class="form-check">
-                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre A" id="eqA" checked>
-                    <label class="form-check-label" for="eqA">Dompierre A</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre B" id="eqB" checked>
-                    <label class="form-check-label" for="eqB">Dompierre B</label>
-                </div>
-            </div>
+        <!-- ÉQUIPES -->
+        <div class="filter-section">
+            <h6>Équipes</h6>
+            <div class="filter-grid">
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Dompierre A" checked>
+                    Dompierre A
+                </label>
 
-            <div class="col-6 col-md-4">
-                <div class="form-check">
-                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre C" id="eqC" checked>
-                    <label class="form-check-label" for="eqC">Dompierre C</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input filter-equipe" type="checkbox" value="Dompierre D" id="eqD" checked>
-                    <label class="form-check-label" for="eqD">Dompierre D</label>
-                </div>
-            </div>
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Dompierre B" checked>
+                    Dompierre B
+                </label>
 
-            <div class="col-6 col-md-4">
-                <div class="form-check">
-                    <input class="form-check-input filter-equipe" type="checkbox" value="Féminines" id="eqF" checked>
-                    <label class="form-check-label" for="eqF">Féminines</label>
-                </div>
-            </div>
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Dompierre C" checked>
+                    Dompierre C
+                </label>
 
-            <div class="mt-3 text-end">
-                <button id="reset-filtres" class="btn btn-secondary btn-sm">
-                    Réinitialiser les filtres
-                </button>
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Dompierre D" checked>
+                    Dompierre D
+                </label>
+
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Féminines" checked>
+                    Féminines
+                </label>
+
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Cadets-Juniors" checked>
+                    Cadets-Juniors
+                </label>
+
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Benjamins-Minimes" checked>
+                    Benjamins-Minimes
+                </label>
+
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Cadettes-Juniors" checked>
+                    Cadettes-Juniors
+                </label>
             </div>
         </div>
 
-        <hr>
+        <!-- LIEU -->
+        <div class="filter-section">
+            <h6>Lieu</h6>
+            <div class="filter-grid">
+                <label class="filter-chip">
+                    <input type="radio" name="filter-lieu" class="filter-lieu" value="tous" checked>
+                    Tous
+                </label>
 
-        <!-- FILTRE LIEU -->
-        <h6 class="mb-2">Lieu</h6>
-        <div class="d-flex flex-wrap gap-3">
-            <div class="form-check">
-                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuTous" value="tous" checked>
-                <label class="form-check-label" for="lieuTous">Tous</label>
-            </div>
+                <label class="filter-chip">
+                    <input type="radio" name="filter-lieu" class="filter-lieu" value="domicile">
+                    Domicile
+                </label>
 
-            <div class="form-check">
-                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuDom" value="domicile">
-                <label class="form-check-label" for="lieuDom">Domicile</label>
+                <label class="filter-chip">
+                    <input type="radio" name="filter-lieu" class="filter-lieu" value="extérieur">
+                    Extérieur
+                </label>
             </div>
+        </div>
 
-            <div class="form-check">
-                <input class="form-check-input filter-lieu" type="radio" name="filter-lieu" id="lieuExt" value="extérieur">
-                <label class="form-check-label" for="lieuExt">Extérieur</label>
-            </div>
+        <div class="filter-footer">
+            <button id="reset-filtres" class="btn btn-secondary btn-sm">Réinitialiser</button>
         </div>
 
     </div>
+
         
     <hr>
 
