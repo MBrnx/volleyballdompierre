@@ -26,4 +26,9 @@
         <priority>0.7</priority>
     </url>
 
+    <url>
+        <loc>https://mbrnx.github.io/volleyballdompierre/evenements.html</loc>
+        <priority>0.7</priority>
+    </url>
+
 </urlset>
