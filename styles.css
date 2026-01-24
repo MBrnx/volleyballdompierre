@@ -355,14 +355,14 @@ img[alt="Facebook"] {
 }
 
 #carouselEquipe {
-  max-width: 800px;   /* largeur maximale du carrousel */
+  max-width: 1500px;   /* largeur maximale du carrousel */
   margin: 0 auto;     /* centre le carrousel */
   border-radius: 15px;
   overflow: hidden;
 }
 
 #galerie {
-  max-width: 900px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 
@@ -495,4 +495,11 @@ img[alt="Facebook"] {
 .day-title {
     margin: 0;
     font-weight: 600;
+}
+
+.bureau-card {
+    background-color: #f8f9fa; 
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
