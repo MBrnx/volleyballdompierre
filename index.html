@@ -35,7 +35,14 @@
     <link rel="apple-touch-icon" href="favicon.png">
 
     <!-- Sécurité -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; frame-src https://www.facebook.com https://connect.facebook.net;">
+     <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        img-src 'self' https: data:;
+        script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
+        connect-src 'self' https://cloud.umami.is https://opensheet.elk.sh https://cdn.jsdelivr.net https://unpkg.com;
+        style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+        frame-src https://www.facebook.com https://connect.facebook.net;
+    ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
