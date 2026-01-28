@@ -2,27 +2,47 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-site-verification" content="5ImnB3kuCoSG5LMc7_PqISz09_D3XsYKzDRHv4BIJjQ">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Actualités – VolleyBall Dompierre</title>
     <meta name="description" content="Retrouvez toutes les actualités du VolleyBall Club de Dompierre sur Helpe : matchs, résultats, photos et annonces du club.">
 
+    <!-- Canonical -->
+    <link rel="canonical" href="https://mbrnx.github.io/volleyballdompierre/actu.html">
+
+    <!-- SEO -->
+    <meta name="keywords" content="volley dompierre, volleyball dompierre, club volley dompierre sur helpe, vbc dompierre, volley nord, volley helpe">
+
     <!-- OpenGraph -->
     <meta property="og:title" content="Actualités – VolleyBall Dompierre">
     <meta property="og:description" content="Toutes les actualités du club : résultats, photos, annonces et événements.">
-    <meta property="og:image" content="images/LogoDompierre.png">
+    <meta property="og:image" content="https://mbrnx.github.io/volleyballdompierre/images/LogoDompierre.png">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VolleyBall Club de Dompierre-sur-Helpe">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Actualités – VolleyBall Dompierre">
+    <meta name="twitter:description" content="Toutes les actualités du club : résultats, photos, annonces et événements.">
+    <meta name="twitter:image" content="https://mbrnx.github.io/volleyballdompierre/images/LogoDompierre.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/LogoDompierre.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/LogoDompierre.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/LogoDompierre.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="images/LogoDompierre.png">
 
     <!-- Sécurité -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
       img-src 'self' https: data:;
-      script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+      script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
       style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
       connect-src 'self' https://opensheet.elk.sh;
       font-src 'self' https://cdn.jsdelivr.net;
+      frame-src https://www.facebook.com https://connect.facebook.net;
     ">
-
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
@@ -31,7 +51,10 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="icon" type="image/png" href="images/LogoDompierre.png">
+
+    <!-- Umami -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="2e96f38a-bb0a-408f-bbbc-8419c2601b52"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
@@ -51,10 +74,18 @@
     <div id="footer-placeholder"></div>
   </footer>
 
-    <!-- Lightbox -->
-    <div id="lightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
-        <img id="lightbox-img" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
-    </div>
+  <!-- Lightbox -->
+  <div id="lightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
+    <img id="lightbox-img" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+  </div>
+
+  <button id="back-to-top" title="Retour en haut">
+    <svg class="progress-ring" width="60" height="60">
+      <circle class="progress-ring__background" cx="30" cy="30" r="26" />
+      <circle class="progress-ring__circle" cx="30" cy="30" r="26" />
+    </svg>
+    <span>&#8679;</span>
+  </button>
 
   <script src="script.js"></script>
 </body>

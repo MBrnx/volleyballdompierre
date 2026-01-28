@@ -2,20 +2,46 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-site-verification" content="5ImnB3kuCoSG5LMc7_PqISz09_D3XsYKzDRHv4BIJjQ">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Live Match – VolleyBall Dompierre</title>
     <meta name="description" content="Regardez les matchs du VolleyBall Club de Dompierre sur Helpe en direct grâce à notre diffusion Facebook Live.">
 
+    <!-- Canonical -->
+    <link rel="canonical" href="https://mbrnx.github.io/volleyballdompierre/live.html">
+
+    <!-- SEO -->
+    <meta name="keywords" content="volley dompierre, volleyball dompierre, live volley, match en direct, vb dompierre">
+
     <!-- OpenGraph -->
     <meta property="og:title" content="Live Match – VolleyBall Dompierre">
     <meta property="og:description" content="Suivez les matchs du club en direct.">
-    <meta property="og:image" content="images/LogoDompierre.png">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://mbrnx.github.io/volleyballdompierre/images/LogoDompierre.png">
+    <meta property="og:site_name" content="VolleyBall Club de Dompierre-sur-Helpe">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Live Match – VolleyBall Dompierre">
+    <meta name="twitter:description" content="Suivez les matchs du club en direct.">
+    <meta name="twitter:image" content="https://mbrnx.github.io/volleyballdompierre/images/LogoDompierre.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/LogoDompierre.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/LogoDompierre.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/LogoDompierre.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="images/LogoDompierre.png">
 
     <!-- Sécurité -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; frame-src https://www.facebook.com https://connect.facebook.net;">
-
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      img-src 'self' https: data:;
+      script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
+      style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+      frame-src https://www.facebook.com https://connect.facebook.net;
+      connect-src 'self';
+    ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
@@ -23,9 +49,15 @@
     <!-- CSS & JS -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="images/LogoDompierre.png">
+
+    <!-- Vue / Axios -->
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios@latest"></script>
+
+    <!-- Umami -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="2e96f38a-bb0a-408f-bbbc-8419c2601b52"></script>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
@@ -44,39 +76,31 @@
     <div class="d-flex justify-content-center">
       <div class="video-wrapper">
         <!-- Plugin Facebook Video -->
-        <div class="fb-video" 
+        <div class="fb-video"
           data-href="https://www.facebook.com/vbdompierre/videos/1770874900286049/"
-          data-width="800" 
-          data-show-text="false" 
+          data-width="800"
+          data-show-text="false"
           data-autoplay="false">
         </div>
-
-        <!-- Facebook live
-        <div class="fb-video" 
-            data-href="https://www.https://www.facebook.com/vbdompierre/videos/1770874900286049" 
-            data-width="800" 
-            data-show-text="false" 
-            data-autoplay="true">
-        </div> -->
       </div>
     </div>
 
     <div class="d-flex justify-content-center align-items-center mt-4">
-    <a href="https://www.facebook.com/vbdompierre" target="_blank" class="d-flex align-items-center text-decoration-none">
+      <a href="https://www.facebook.com/vbdompierre" target="_blank" class="d-flex align-items-center text-decoration-none">
         <img src="images/facebook_logo.png" alt="Facebook" width="60" class="me-3">
         <span class="fs-5 text-dark">Suivez notre page pour ne rien manquer !</span>
-    </a>
+      </a>
     </div>
 
-  </main> 
+  </main>
 
   <footer>
     <div id="footer-placeholder"></div>
   </footer>
 
-  <!-- SDK Facebook pour plugin vidéo -->
+  <!-- SDK Facebook -->
   <div id="fb-root"></div>
-  <script async defer crossorigin="anonymous" 
+  <script async defer crossorigin="anonymous"
           src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v17.0">
   </script>
 
