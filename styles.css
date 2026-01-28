@@ -349,29 +349,54 @@ img[alt="Facebook"] {
     border-radius: 10px;
 }
 
-#carouselEquipe .carousel-item img {
-  height: 70vh;
-  object-fit: cover;
-}
-
 #carouselEquipe {
-  max-width: 1500px;   /* largeur maximale du carrousel */
-  margin: 0 auto;     /* centre le carrousel */
+  aspect-ratio: 16/9;
+  max-height: 500px; /* à ajuster */
+  margin: 0 auto;
   border-radius: 15px;
   overflow: hidden;
 }
 
+#carouselEquipe .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#carouselEquipe .carousel-item:nth-child(1) img {
+  object-fit: contain;
+  object-position: 50% -35%; 
+}
+
+#carouselEquipe .carousel-item:nth-child(2) img {
+  object-fit: contain;
+  object-position: 60% 10%; 
+}
+
+#carouselEquipe .carousel-item:nth-child(3) img {
+  object-fit: contain;
+  object-position: 40% -20%; 
+}
+
 #galerie {
-  max-width: 1500px;
+  max-width: 1000px;
   margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  #carouselEquipe {
+    max-height: 600px; /* ou 650px selon besoin */
+  }
 }
 
 /* Ajustement pour petits écrans */
 @media (max-width: 767px) {
   #carouselEquipe .carousel-item img {
     height: 40vh;
+    object-position: 60% 5%; 
   }
 }
+
 
 .table {
   background-color: #fff;
