@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/</loc>
+    <loc>https://volleyballdompierre.fr/</loc>
     <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
   </url>
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/equipe.html</loc>
+    <loc>https://volleyballdompierre.fr/actu.html</loc>
     <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
   </url>
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/actu.html</loc>
-    <priority>0.7</priority>
+    <loc>https://volleyballdompierre.fr/contact.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
   </url>
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/live.html</loc>
-    <priority>0.7</priority>
+    <loc>https://volleyballdompierre.fr/equipe.html</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
   </url>
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/contact.html</loc>
+    <loc>https://volleyballdompierre.fr/evenements.html</loc>
     <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
   </url>
+
   <url>
-    <loc>https://mbrnx.github.io/volleyballdompierre/evenements.html</loc>
-    <priority>0.7</priority>
+    <loc>https://volleyballdompierre.fr/live.html</loc>
+    <priority>0.6</priority>
+    <changefreq>weekly</changefreq>
   </url>
+
+  <url>
+    <loc>https://volleyballdompierre.fr/mentions-legales.html</loc>
+    <priority>0.3</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://volleyballdompierre.fr/404.html</loc>
+    <priority>0.1</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
 </urlset>
