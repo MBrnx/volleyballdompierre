@@ -68,7 +68,7 @@ window.addEventListener("scroll", () => {
     if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
       navLinks.forEach(link => link.classList.remove("active"));
       const activeLink = document.querySelector(`a[href="#${section.id}"]`);
-      if (activeLink) activeLink.classList.add("active");
+      if (activeLink) activeLink.addEventListener("active");
     }
   });
 });
@@ -106,11 +106,12 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Chargement des actus depuis Google Sheets ---
+  // --- Chargement des actus ---
   async function loadActus() {
+    if (!actusList) return; // 🔥 Correction
+
     const data = await loadData("actualites");
 
-    // Trier du plus récent au plus ancien
     data.sort((a, b) => {
       const da = new Date(a.date.split("/").reverse().join("-"));
       const db = new Date(b.date.split("/").reverse().join("-"));
@@ -124,358 +125,339 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Création d'une carte ---
-    function parseFrenchDate(str) {
-        if (!str) return new Date();
+  function parseFrenchDate(str) {
+    if (!str) return new Date();
 
-        // Format AAAA-MM-JJ → direct
-        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-            return new Date(str);
-        }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return new Date(str);
 
-        // Format JJ/MM/AAAA ou J/M/AAAA
-        if (str.includes("/")) {
-            const parts = str.split("/");
-            if (parts.length === 3) {
-            const [day, month, year] = parts;
-            return new Date(`${year}-${month.padStart(2,"0")}-${day.padStart(2,"0")}`);
-            }
-        }
-
-        // Format JJ-MM-AAAA
-        if (str.includes("-")) {
-            const parts = str.split("-");
-            if (parts.length === 3) {
-            const [day, month, year] = parts;
-            return new Date(`${year}-${month}-${day}`);
-            }
-        }
-
-        // Dernier recours : laisser JS deviner
-        return new Date(str);
+    if (str.includes("/")) {
+      const [day, month, year] = str.split("/");
+      return new Date(`${year}-${month}-${day}`);
     }
 
+    return new Date(str);
+  }
 
-    function createActuCard(author, content, image = null, date = null) {
+  function createActuCard(author, content, image = null, date = null) {
+    if (!actusList) return; // 🔥 Correction
+
     const card = document.createElement("div");
     card.classList.add("card", "card-actu", "p-3", "mb-3");
 
     const dateObj = parseFrenchDate(date);
     const dateStr = dateObj.toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
+      day: "numeric",
+      month: "long",
+      year: "numeric"
     });
 
     card.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
         <div><strong>${author}</strong> <small class="text-muted">${dateStr}</small></div>
-        </div>
-        <p>${content}</p>
-        ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
+      </div>
+      <p>${content}</p>
+      ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
     `;
 
     actusList.append(card);
 
     const imgEl = card.querySelector("img");
     if (imgEl) enableLightbox(imgEl);
-    }
-
+  }
 
   loadActus();
 
-  // --- Désactivation du formulaire ---
-    if (form) {
-        form.addEventListener("submit", e => {
-            e.preventDefault();
-            alert("L’ajout d’actus est désactivé.");
-        });
-    }
-
+  if (form) {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      alert("L’ajout d’actus est désactivé.");
+    });
+  }
 });
 
-
+// --- Sections ---
 function showSection(sectionId, btn) {
-    document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
+  document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
+  document.getElementById(sectionId).style.display = 'block';
 
-    document.querySelectorAll('main button[data-section]').forEach(b => {
-        b.classList.remove('btn-success');
-        b.classList.add('btn-outline-success');
-    });
+  document.querySelectorAll('main button[data-section]').forEach(b => {
+    b.classList.remove('btn-success');
+    b.classList.add('btn-outline-success');
+  });
 
-    btn.classList.remove('btn-outline-success');
-    btn.classList.add('btn-success');
+  btn.classList.remove('btn-outline-success');
+  btn.classList.add('btn-success');
 
-    // --- Cacher / afficher le bouton filtre ---
-    const btnFiltres = document.getElementById("btn-filtres");
-
-    if (sectionId === "evenements") {
-        btnFiltres.style.display = "none";
-    } else {
-        btnFiltres.style.display = "inline-block";
-    }
+  const btnFiltres = document.getElementById("btn-filtres");
+  if (btnFiltres) {
+    btnFiltres.style.display = sectionId === "evenements" ? "none" : "inline-block";
+  }
 }
 
 document.querySelectorAll('main button[data-section]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const section = btn.getAttribute('data-section');
-        showSection(section, btn);
-    });
+  btn.addEventListener('click', () => {
+    const section = btn.getAttribute('data-section');
+    showSection(section, btn);
+  });
 });
 
-// Calendrier interactif
+// --- Google Sheets ---
 const SHEET_ID = "1FBm9gqxWGxO9x5nQyjExJkZTqXg6HMg9HFLZhoYkU2s";
 
+async function loadData(sheetName) {
+  const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
+  const response = await fetch(url);
+  return await response.json();
+}
+
+// --- Matchs à venir ---
+async function loadMatchsAvenir() {
+  const container = document.querySelector("#avenir .list-group");
+  if (!container) return; // 🔥 Correction
+
+  const data = await loadData("matchs_avenir");
+  const filters = getFilters();
+
+  data.sort((a, b) => {
+    const da = new Date(a.date.split("/").reverse().join("-"));
+    const db = new Date(b.date.split("/").reverse().join("-"));
+    return da - db;
+  });
+
+  container.innerHTML = "";
+
+  const filtered = data.filter(row => {
+    const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+    const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+    if (!filters.equipes.some(eq =>
+      row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
+      row.adversaire.toLowerCase().includes(eq.toLowerCase())
+    )) return false;
+
+    if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
+
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="bg-light p-3 mt-3 border rounded text-center text-muted">
+        Aucun match à venir
+      </div>`;
+    return;
+  }
+
+  let currentDate = "";
+
+  filtered.forEach(row => {
+    const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+    const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+    if (row.date !== currentDate) {
+      currentDate = row.date;
+
+      container.innerHTML += `
+        <div class="day-separator mt-4 mb-2">
+          <div class="day-line"></div>
+          <h5 class="day-title text-primary">${currentDate}</h5>
+          <div class="day-line"></div>
+        </div>`;
+    }
+
+    container.innerHTML += `
+      <div class="match-card border rounded p-3 mb-2">
+        <h6 class="mb-1">${row.equipe} – ${row.adversaire}</h6>
+        <p class="mb-1 text-muted">
+          ${row.heure} — <em>${row.matchs || ""}</em> — ${domExt}
+        </p>
+        <small class="text-secondary">${row.lieu}</small>
+      </div>`;
+  });
+}
+
+// --- Résultats ---
+async function loadResultats() {
+  const container = document.querySelector("#resultats .list-group");
+  if (!container) return; // 🔥 Correction
+
+  const data = await loadData("resultats");
+  const filters = getFilters();
+
+  data.sort((a, b) => {
+    const da = new Date(a.date.split("/").reverse().join("-"));
+    const db = new Date(b.date.split("/").reverse().join("-"));
+    return db - da;
+  });
+
+  container.innerHTML = "";
+
+  const filtered = data.filter(row => {
+    const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+    const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+    if (!filters.equipes.some(eq =>
+      row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
+      row.adversaire.toLowerCase().includes(eq.toLowerCase())
+    )) return false;
+
+    if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
+
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <li class="list-group-item text-center text-muted">
+        Aucun résultat disponible
+      </li>`;
+    return;
+  }
+
+  let currentDate = "";
+
+  filtered.forEach(row => {
+    const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+    const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+    if (row.date !== currentDate) {
+      currentDate = row.date;
+      container.innerHTML += `
+        <div class="bg-light p-2 mt-3 border rounded">
+          <strong>${currentDate}</strong>
+        </div>`;
+    }
+
+    container.innerHTML += `
+      <div class="list-group-item">
+        <h5>${row.equipe} ${row.score} ${row.adversaire}</h5>
+        <p>${row.resume || ""}</p>
+        <small class="text-muted">${domExt}</small>
+      </div>`;
+  });
+}
+
+// --- Événements ---
+async function loadEvenements() {
+  const container = document.querySelector("#evenements .list-group");
+  if (!container) return; // 🔥 Correction
+
+  const data = await loadData("evenements");
+
+  data.sort((a, b) => {
+    const da = new Date(a.date.split("/").reverse().join("-"));
+    const db = new Date(b.date.split("/").reverse().join("-"));
+    return da - db;
+  });
+
+  container.innerHTML = "";
+
+  if (data.length === 0) {
+    container.innerHTML = `
+      <li class="list-group-item text-center text-muted">
+        Aucun événement prévu
+      </li>`;
+    return;
+  }
+
+  let currentDate = "";
+
+  data.forEach(row => {
+    if (row.date !== currentDate) {
+      currentDate = row.date;
+      container.innerHTML += `
+        <div class="bg-light p-2 mt-3 border rounded">
+          <strong>${currentDate}</strong>
+        </div>`;
+    }
+
+    container.innerHTML += `
+      <li class="list-group-item">
+        <strong>${row.titre}</strong><br>
+        <small>${row.description}</small>
+      </li>`;
+  });
+}
+
+// --- Filtres ---
+function getFilters() {
+  const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
+  const selectedEquipes = Array.from(equipeCheckboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  const lieuRadio = document.querySelector(".filter-lieu:checked");
+  const lieu = lieuRadio ? lieuRadio.value : "tous";
+
+  return { equipes: selectedEquipes, lieu };
+}
+
+document.querySelectorAll(".filter-equipe, .filter-lieu").forEach(input => {
+  input.addEventListener("change", () => {
+    loadMatchsAvenir();
+    loadResultats();
+  });
+});
+
+// --- Bouton filtres ---
 const btnFiltres = document.getElementById("btn-filtres");
 const zoneFiltres = document.getElementById("zone-filtres");
 
-// ----------------------
-// Chargement Google Sheet
-// ----------------------
-async function loadData(sheetName) {
-    const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
-    const response = await fetch(url);
-    return await response.json();
-}
-
-// ----------------------
-// Récupération des filtres
-// ----------------------
-function getFilters() {
-    const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
-    const selectedEquipes = Array.from(equipeCheckboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
-
-    const lieuRadio = document.querySelector(".filter-lieu:checked");
-    const lieu = lieuRadio ? lieuRadio.value : "tous";
-
-    return { equipes: selectedEquipes, lieu };
-}
-
-// ----------------------
-// MATCHS À VENIR
-// ----------------------
-async function loadMatchsAvenir() {
-    const data = await loadData("matchs_avenir");
-    const filters = getFilters();
-
-    // Tri par date
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return da - db;
-    });
-
-    const container = document.querySelector("#avenir .list-group");
-    container.innerHTML = "";
-
-    // --- FILTRAGE ---
-    const filtered = data.filter(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        // équipe dans équipe OU adversaire
-        if (!filters.equipes.some(eq =>
-            row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
-            row.adversaire.toLowerCase().includes(eq.toLowerCase())
-        )) {
-            return false;
-        }
-
-        if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
-
-        return true;
-    });
-
-    // --- AUCUN MATCH ---
-    if (filtered.length === 0) {
-        container.innerHTML = `
-            <div class="bg-light p-3 mt-3 border rounded text-center text-muted">
-                Aucun match à venir
-            </div>`;
-        return;
-    }
-
-    // --- AFFICHAGE PAR DATE ---
-    let currentDate = "";
-
-    filtered.forEach(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        // Nouveau jour → séparation + titre
-        if (row.date !== currentDate) {
-            currentDate = row.date;
-
-            container.innerHTML += `
-                <div class="day-separator mt-4 mb-2">
-                    <div class="day-line"></div>
-                    <h5 class="day-title text-primary">${currentDate}</h5>
-                    <div class="day-line"></div>
-                </div>`;
-        }
-
-        // Carte de match
-        container.innerHTML += `
-            <div class="match-card border rounded p-3 mb-2">
-                <h6 class="mb-1">${row.equipe} – ${row.adversaire}</h6>
-                <p class="mb-1 text-muted">
-                    ${row.heure} — <em>${row.matchs || ""}</em> — ${domExt}
-                </p>
-                <small class="text-secondary">${row.lieu}</small>
-            </div>`;
-    });
-}
-
-// ----------------------
-// RÉSULTATS
-// ----------------------
-async function loadResultats() {
-    const data = await loadData("resultats");
-    const filters = getFilters();
-
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return db - da;
-    });
-
-    const container = document.querySelector("#resultats .list-group");
-    container.innerHTML = "";
-
-    const filtered = data.filter(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        if (!filters.equipes.some(eq =>
-            row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
-            row.adversaire.toLowerCase().includes(eq.toLowerCase())
-        )) {
-            return false;
-        }
-        if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
-
-        return true;
-    });
-
-    if (filtered.length === 0) {
-        container.innerHTML = `
-            <li class="list-group-item text-center text-muted">
-                Aucun résultat disponible
-            </li>`;
-        return;
-    }
-
-    let currentDate = "";
-
-    filtered.forEach(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        if (row.date !== currentDate) {
-            currentDate = row.date;
-            container.innerHTML += `
-                <div class="bg-light p-2 mt-3 border rounded">
-                    <strong>${currentDate}</strong>
-                </div>`;
-        }
-
-        container.innerHTML += `
-            <div class="list-group-item">
-                <h5>${row.equipe} ${row.score} ${row.adversaire}</h5>
-                <p>${row.resume || ""}</p>
-                <small class="text-muted">${domExt}</small>
-            </div>`;
-    });
-}
-
-// ----------------------
-// ÉVÉNEMENTS
-// ----------------------
-async function loadEvenements() {
-    const data = await loadData("evenements");
-
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return da - db;
-    });
-
-    const container = document.querySelector("#evenements .list-group");
-    container.innerHTML = "";
-
-    if (data.length === 0) {
-        container.innerHTML = `
-            <li class="list-group-item text-center text-muted">
-                Aucun événement prévu
-            </li>`;
-        return;
-    }
-
-    let currentDate = "";
-
-    data.forEach(row => {
-        if (row.date !== currentDate) {
-            currentDate = row.date;
-            container.innerHTML += `
-                <div class="bg-light p-2 mt-3 border rounded">
-                    <strong>${currentDate}</strong>
-                </div>`;
-        }
-
-        container.innerHTML += `
-            <li class="list-group-item">
-                <strong>${row.titre}</strong><br>
-                <small>${row.description}</small>
-            </li>`;
-    });
-}
-
-// ----------------------
-// Mise à jour automatique quand on change un filtre
-// ----------------------
-document.querySelectorAll(".filter-equipe, .filter-lieu").forEach(input => {
-    input.addEventListener("change", () => {
-        loadMatchsAvenir();
-        loadResultats();
-    });
-});
-
-// Masquer le filtre dans la section Événements
-document.querySelectorAll("button[data-section]").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const section = btn.dataset.section;
-
-        if (section === "evenements") {
-            zoneFiltres.style.display = "none";
-        }
-    });
-});
-
-btnFiltres.addEventListener("click", () => {
+if (btnFiltres && zoneFiltres) {
+  btnFiltres.addEventListener("click", () => {
     const visible = zoneFiltres.style.display === "block";
     zoneFiltres.style.display = visible ? "none" : "block";
-});
+  });
+}
 
-document.getElementById("reset-filtres").addEventListener("click", () => {
-
-    // Réinitialiser les équipes
+// --- Reset filtres ---
+const resetFiltres = document.getElementById("reset-filtres");
+if (resetFiltres) {
+  resetFiltres.addEventListener("click", () => {
     document.querySelectorAll(".filter-equipe").forEach(cb => {
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change")); 
+      cb.checked = true;
+      cb.dispatchEvent(new Event("change"));
     });
 
-    // Réinitialiser le lieu
     const lieuTous = document.getElementById("lieuTous");
-    lieuTous.checked = true;
-    lieuTous.dispatchEvent(new Event("change")); 
-});
+    if (lieuTous) {
+      lieuTous.checked = true;
+      lieuTous.dispatchEvent(new Event("change"));
+    }
+  });
+}
 
-// ----------------------
-// Chargement initial
-// ----------------------
+// --- Chargement initial ---
 loadMatchsAvenir();
 loadResultats();
 loadEvenements();
+
+// --- Image cards ---
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".card-img-top").forEach(img => {
+
+    // 🔥 Ignore les images vides
+    if (!img.src || img.src.trim() === "") return;
+
+    img.style.cursor = "pointer";
+    img.setAttribute("data-bs-toggle", "modal");
+    img.setAttribute("data-bs-target", "#imageModal");
+
+    img.addEventListener("click", () => {
+      document.getElementById('modalImage').src = img.src; // 🔥 URL absolue
+    });
+  });
+});
+
+// --- Modal image ---
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('[data-bs-toggle="modal"]').forEach(link => {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      const imgSrc = this.getAttribute('href');
+      document.getElementById('modalImage').src = imgSrc;
+    });
+  });
+});
+
+// --- End of script.js ---

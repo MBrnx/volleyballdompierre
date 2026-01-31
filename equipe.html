@@ -131,7 +131,7 @@
 
         <div class="col-md-3">
           <div class="card">
-            <img src="images/cadets.jpg" class="card-img-top" alt="Cadets">
+            <img src="" class="card-img-top" alt="Cadets">
             <div class="card-body">
               <h5 class="card-title">Cadets</h5>
               <p class="card-text">Horaires : Mardi 18h30-20h</p>
@@ -143,7 +143,7 @@
           <div class="card">
             <img src="images/cadettes-minimes.jpg" class="card-img-top" alt="Cadettes">
             <div class="card-body">
-              <h5 class="card-title">Cadettes / Minimes</h5>
+              <h5 class="card-title">Cadettes / Juniors</h5>
               <p class="card-text">Horaires : Jeudi 18h30-20h</p>
             </div>
           </div>
@@ -153,8 +153,20 @@
           <div class="card">
             <img src="images/minimes.jpg" class="card-img-top" alt="Minimes">
             <div class="card-body">
-              <h5 class="card-title">Minimes</h5>
+              <h5 class="card-title">Minimes Garçons</h5>
               <p class="card-text">Horaires : Mardi 18h30-20h</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 mt-4">
+          <div class="card">
+            <a href="images/minimes_filles.jpg" data-bs-toggle="modal" data-bs-target="#imageModal">
+              <img src="images/minimes_filles.jpg" class="card-img-top" alt="Minimes Filles">
+            </a>
+            <div class="card-body">
+              <h5 class="card-title">Minimes Filles</h5>
+              <p class="card-text">Horaires : Jeudi 18h30-20h</p>
             </div>
           </div>
         </div>
@@ -169,15 +181,6 @@
           </div>
         </div>
 
-        <div class="col-md-3 mt-4">
-          <div class="card">
-            <img src="images/poussins.jpg" class="card-img-top" alt="Poussins">
-            <div class="card-body">
-              <h5 class="card-title">Poussins</h5>
-              <p class="card-text">Horaires : Mercredi 17h-18h30</p>
-            </div>
-          </div>
-        </div>
 
       </div>
     </section>
@@ -257,6 +260,15 @@
     <span>&#8679;</span>
   </button>
 
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-transparent border-0">
+        <img id="modalImage" src="" class="img-fluid rounded">
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
+
 </body>
 </html>
