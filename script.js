@@ -67,8 +67,7 @@ window.addEventListener("scroll", () => {
   document.querySelectorAll("section").forEach(section => {
     if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
       navLinks.forEach(link => link.classList.remove("active"));
-      const activeLink = document.querySelector(`a[href="#${section.id}"]`);
-      if (activeLink) activeLink.addEventListener("active");
+      if (activeLink) activeLink.classList.add("active");
     }
   });
 });
@@ -445,17 +444,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     img.addEventListener("click", () => {
       document.getElementById('modalImage').src = img.src; // 🔥 URL absolue
-    });
-  });
-});
-
-// --- Modal image ---
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll('[data-bs-toggle="modal"]').forEach(link => {
-    link.addEventListener('click', function (event) {
-      event.preventDefault();
-      const imgSrc = this.getAttribute('href');
-      document.getElementById('modalImage').src = imgSrc;
     });
   });
 });
