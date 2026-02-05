@@ -3,49 +3,50 @@
 
   <url>
     <loc>https://volleyballdompierre.fr/</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/actu.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/contact.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/equipe.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/evenements.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/live.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.6</priority>
     <changefreq>weekly</changefreq>
   </url>
 
   <url>
     <loc>https://volleyballdompierre.fr/mentions-legales.html</loc>
+    <lastmod>2025-02-05</lastmod>
     <priority>0.3</priority>
-    <changefreq>yearly</changefreq>
-  </url>
-
-  <url>
-    <loc>https://volleyballdompierre.fr/404.html</loc>
-    <priority>0.1</priority>
     <changefreq>yearly</changefreq>
   </url>
 
