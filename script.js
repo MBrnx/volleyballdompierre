@@ -500,6 +500,57 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 3000);
 
+    /* // --- DARK MODE ---
+
+    // Bouton dans la navbar
+    const toggleDark = document.getElementById("toggle-dark");
+
+    // Appliquer le mode sombre si l'utilisateur l'avait activé
+    if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+    }
+
+    // Activer automatiquement si le système est en mode sombre
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches &&
+        localStorage.getItem("darkMode") === null) {
+    document.body.classList.add("dark");
+    localStorage.setItem("darkMode", true);
+    }
+
+    // Gestion du clic sur le bouton
+    if (toggleDark) {
+    toggleDark.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+    });
+    }
+
+    // Attendre que tout soit chargé (HTML + navbar injectée)
+    window.addEventListener("load", () => {
+
+        const toggleDark = document.getElementById("toggle-dark");
+
+        if (toggleDark) {
+            toggleDark.addEventListener("click", () => {
+                document.body.classList.toggle("dark");
+                localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+            });
+        }
+
+        // Charger le mode sombre si activé
+        if (localStorage.getItem("darkMode") === "true") {
+            document.body.classList.add("dark");
+        }
+
+        // Activer automatiquement si le système est en mode sombre
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches &&
+            localStorage.getItem("darkMode") === null) {
+            document.body.classList.add("dark");
+            localStorage.setItem("darkMode", true);
+        }
+    }); */
+
+
     // --- End of script.js ---
 
 });

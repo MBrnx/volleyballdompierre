@@ -531,3 +531,91 @@ img[alt="Facebook"] {
     width: 100% !important;
 }
 
+/*
+/* --- Transition douce --- 
+* {
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+
+/* --- Mode sombre global --- 
+body.dark {
+  background-color: #121212;
+  color: #e5e5e5;
+}
+
+/* --- Navbar --- 
+body.dark .navbar,
+body.dark footer {
+  background-color: #0d0d0d !important;
+  border-color: #222 !important;
+}
+
+body.dark .navbar a,
+body.dark footer a {
+  color: #e5e5e5 !important;
+}
+
+/* --- Cartes --- 
+body.dark .card,
+body.dark .card-horaire,
+body.dark .card-contact {
+  background-color: #1e1e1e;
+  border-color: #333;
+  color: #e5e5e5;
+}
+
+/* --- Tableaux --- 
+body.dark table {
+  background-color: #1e1e1e;
+  color: #e5e5e5;
+}
+
+body.dark table thead {
+  background-color: #2a4f2a !important; /* vert foncé 
+  color: #fff;
+}
+
+body.dark table tbody tr {
+  border-color: #333;
+}
+
+/* --- Boutons --- 
+body.dark .btn {
+  border-color: #888;
+  color: #e5e5e5;
+}
+
+body.dark .btn:hover {
+  background-color: #333;
+}
+
+/* --- Titres --- 
+body.dark .section-title {
+  color: #9ad1ff;
+}
+
+/* --- Liens utiles --- 
+body.dark a {
+  color: #9ad1ff;
+}
+
+/* --- Filtres (si utilisés sur d'autres pages) --- 
+body.dark .filter-card {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+body.dark .filter-chip {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #e5e5e5;
+}
+
+/* --- Back to top --- 
+body.dark #back-to-top {
+  background-color: #1e1e1e;
+  color: #e5e5e5;
+  border-color: #333;
+}
+*/
+
