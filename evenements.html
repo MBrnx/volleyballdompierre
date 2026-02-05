@@ -10,7 +10,7 @@
     <meta name="description" content="Matchs à venir, résultats et événements du VolleyBall Club de Dompierre sur Helpe. Calendrier, scores et activités du club.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://volleyballdompierre.fr/">
+    <link rel="canonical" href="https://volleyballdompierre.fr/evenements.html">
 
     <!-- SEO -->
     <meta name="keywords" content="volley dompierre, volleyball dompierre, matchs volley, résultats volley, événements volley, vbc dompierre">
@@ -41,6 +41,7 @@
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
         frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
+        object-src 'none';
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -49,10 +50,6 @@
     <!-- CSS & JS -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Vue / Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/axios@latest"></script>
 
     <!-- Umami -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="2e96f38a-bb0a-408f-bbbc-8419c2601b52"></script>
@@ -79,10 +76,10 @@
     </div>
 
     <!-- FILTRES -->
-    <div id="zone-filtres" class="filter-card" style="display:none;">
+    <form id="zone-filtres" class="filter-card" style="display:none;" aria-labelledby="titre-filtres">
 
         <div class="filter-header">
-            <h5>Filtres</h5>
+            <h5 id="titre-filtres">Filtres</h5>
         </div>
 
         <!-- ÉQUIPES -->
@@ -160,7 +157,7 @@
             <button id="reset-filtres" class="btn btn-secondary btn-sm">Réinitialiser</button>
         </div>
 
-    </div>
+    </form>
 
     <hr>
 
@@ -171,8 +168,8 @@
     </div>
 
     <!-- Matchs à venir -->
-    <section id="avenir" class="section-content">
-        <h2 class="mb-3">📅 Matchs à venir</h2>
+    <section id="avenir" class="section-content" aria-labelledby="titre-avenir">
+        <h2 class="mb-3" id="titre-avenir">📅 Matchs à venir</h2>
         <div class="alert alert-info mb-3">
             Retrouvez ici tous les matchs à venir du club, regroupés par date.
         </div>
@@ -188,14 +185,14 @@
     </div>
 
     <!-- Résultats -->
-    <section id="resultats" class="section-content" style="display:none;">
-        <h2 class="mb-3">🏆 Résultats des matchs</h2>
+    <section id="resultats" class="section-content" style="display:none;" aria-labelledby="titre-resultats">
+        <h2 class="mb-3" id="titre-resultats">🏆 Résultats des matchs</h2>
         <div class="list-group"></div>
     </section>
 
     <!-- Événements -->
-    <section id="evenements" class="section-content" style="display:none;">
-        <h2 class="mb-3">🎉 Événements du club</h2>
+    <section id="evenements" class="section-content" style="display:none;" aria-labelledby="titre-evenements">
+        <h2 class="mb-3" id="titre-evenements">🎉 Événements du club</h2>
         <ul class="list-group"></ul>
     </section>
 

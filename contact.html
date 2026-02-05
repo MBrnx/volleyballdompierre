@@ -9,7 +9,7 @@
     <meta name="description" content="Contactez le VolleyBall Club de Dompierre sur Helpe : horaires d'entraînement, adresse, responsables, catégories et informations pratiques.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://volleyballdompierre.fr/">
+    <link rel="canonical" href="https://volleyballdompierre.fr/contact.html">
 
     <!-- SEO -->
     <meta name="keywords" content="volley dompierre, volleyball dompierre, contact volley, horaires volley, vbc dompierre">
@@ -40,6 +40,7 @@
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
         frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
+        object-src 'none';
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -50,15 +51,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- Vue / Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/axios@latest"></script>
-
     <!-- Umami -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="2e96f38a-bb0a-408f-bbbc-8419c2601b52"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JSON-LD pour le SEO local -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SportsClub",
+      "name": "VolleyBall Club de Dompierre-sur-Helpe",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Salle François Rivart - Rue d'en Haut",
+        "addressLocality": "Dompierre-sur-Helpe",
+        "postalCode": "59440",
+        "addressCountry": "FR"
+      },
+      "email": "volleyballdompierre@gmail.com",
+      "url": "https://volleyballdompierre.fr",
+      "sport": "Volleyball"
+    }
+    </script>
+
 </head>
 
 <body>
@@ -67,20 +84,20 @@
   <div id="navbar-placeholder"></div>
 
   <!-- Main content -->
-  <main class="container my-5">
-    <h2 class="text-center mb-5">Contact & Horaires</h2>
+  <main class="container my-5" aria-labelledby="main-title">
+    <h1 id="main-title" class="text-center mb-5">Contact & Horaires</h1>
 
     <div class="row gx-4 gy-4">
 
       <!-- Horaires -->
-      <div class="col-lg-4">
-        <h4 class="section-title">Horaires d'entraînement</h4>
+      <section class="col-lg-4" aria-labelledby="horaires-title">
+        <h4 id="horaires-title" class="section-title">Horaires d'entraînement</h4>
         <div class="d-flex flex-column gap-3">
 
           <div class="card card-horaire p-2">
             <strong>Mardi</strong><br>
-            Minimes & Cadets Garçons: 18h30 – 20h<br>
-            Séniors hommes C et D: 20h – 22h
+            Minimes & Cadets Garçons : 18h30 – 20h<br>
+            Séniors hommes C et D : 20h – 22h
           </div>
 
           <div class="card card-horaire p-2">
@@ -92,7 +109,7 @@
           <div class="card card-horaire p-2">
             <strong>Jeudi</strong><br>
             Minimes & Cadettes Fille : 18h30 – 20h<br>
-            Séniors hommes A et B: 20h – 22h
+            Séniors hommes A et B : 20h – 22h
           </div>
 
           <div class="card card-horaire p-2">
@@ -106,24 +123,28 @@
           </div>
 
         </div>
-      </div>
+      </section>
 
       <!-- Contact -->
-      <div class="col-lg-8">
-        <h4 class="section-title">Nous contacter</h4>
+      <section class="col-lg-8" aria-labelledby="contact-title">
+        <h4 id="contact-title" class="section-title">Nous contacter</h4>
         <div class="card-contact">
           <ul class="list-unstyled contact-list">
-            <li><strong>Adresse :</strong> Salle Francois Rivart - Rue d'en Haut, 59440 Dompierre-sur-Helpe</li>
-            <li><strong>Email du club :</strong> <a href="mailto:volleyballdompierre@gmail.com">volleyballdompierre@gmail.com</a></li>
-            <li><strong>Responsable jeunes :</strong> X X – 06 00 00 00 01</li>
-            <li><strong>Responsable séniors :</strong> X X – 06 00 00 00 02</li>
-            <li><strong>Téléphone :</strong> 03 00 00 00 00</li>
+            <li><strong>Adresse :</strong> Salle François Rivart - Rue d'en Haut, 59440 Dompierre-sur-Helpe</li>
+            <li><strong>Email du club :</strong> 
+              <a href="mailto:volleyballdompierre@gmail.com">volleyballdompierre@gmail.com</a>
+            </li>
+            <li><strong>Responsables :</strong> 
+              <a href="https://www.facebook.com/vbdompierre" target="_blank" rel="noopener">
+                Contactez-nous directement sur Facebook
+              </a>
+            </li>
           </ul>
         </div>
 
         <!-- Tableau des catégories -->
-        <div class="mt-4">
-          <h4 class="section-title mb-4">Catégories par année de naissance</h4>
+        <section class="mt-4" aria-labelledby="categories-title">
+          <h4 id="categories-title" class="section-title mb-4">Catégories par année de naissance</h4>
 
           <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
@@ -144,47 +165,48 @@
               </tbody>
             </table>
           </div>
-
-        </div>
-      </div>
+        </section>
+      </section>
     </div>
 
     <!-- Liens utiles -->
-    <div class="mt-5 text-center">
-      <h4 class="section-title mb-4">Liens utiles</h4>
+    <section class="mt-5 text-center" aria-labelledby="liens-title">
+      <h4 id="liens-title" class="section-title mb-4">Liens utiles</h4>
 
       <div class="d-flex justify-content-center gap-4 flex-wrap">
 
-        <a href="https://www.facebook.com/vbdompierre" target="_blank">
+        <a href="https://www.facebook.com/vbdompierre" target="_blank" rel="noopener">
           <img src="images/facebook_logo.png" alt="Facebook" style="width:60px; height:auto; border-radius:10px;">
         </a>
 
-        <a href="https://www.instagram.com/j_d.photos" target="_blank">
+        <a href="https://www.instagram.com/j_d.photos" target="_blank" rel="noopener">
           <img src="images/instagram.svg" alt="Instagram" style="width:60px; height:auto;">
         </a>
 
-        <a href="https://linktr.ee/j_d.photos" target="_blank">
+        <a href="https://linktr.ee/j_d.photos" target="_blank" rel="noopener">
           <img src="images/linktree.jpeg" alt="Linktree" style="width:60px; height:auto; border-radius:10px;">
         </a>
 
-        <a href="https://www.helloasso.com/associations/foyer-rural-de-jeunes-et-d-education-populaire-laique-avec-associations-sportives" target="_blank">
+        <a href="https://www.helloasso.com/associations/foyer-rural-de-jeunes-et-d-education-populaire-laique-avec-associations-sportives" target="_blank" rel="noopener">
           <img src="images/helloassologo.webp" alt="HelloAsso" style="width:105px; height:auto; border-radius:10px;">
         </a>
 
       </div>
-    </div>
+    </section>
 
     <!-- Carte -->
-    <div class="mt-5">
-      <h4 class="section-title">Notre salle</h4>
+    <section class="mt-5" aria-labelledby="salle-title">
+      <h4 id="salle-title" class="section-title">Notre salle</h4>
       <div class="ratio ratio-16x9">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1808.0696019144234!2d3.8605928292361607!3d50.1424963357116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c265257b86b69d%3A0x55fbb2ac158d56f4!2sFRL%20-%20Club%20de%20volley-ball%20Dompierre%20sur%20Helpe!5e0!3m2!1sfr!2sfr!4v1762440729609!5m2!1sfr!2sfr"
                 width="600" height="450" style="border:0;" allowfullscreen loading="lazy"
+                title="Localisation de la salle François Rivart"
                 referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
-    </div>
+    </section>
 
   </main>
+
 
   <!-- Footer -->
   <footer>

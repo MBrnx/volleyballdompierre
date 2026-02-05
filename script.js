@@ -1,5 +1,7 @@
 // --- Google Sheets ---
 const SHEET_ID = "1FBm9gqxWGxO9x5nQyjExJkZTqXg6HMg9HFLZhoYkU2s";
+const PAGE_ID = ""; 
+const ACCESS_TOKEN = "";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -449,6 +451,43 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('modalImage').src = img.src;
         });
     });
+
+    // --- Facebook Live ---
+    async function loadFacebookLive() {
+        const fallback = document.getElementById("live-fallback");
+
+        // Si pas encore configuré, on affiche juste le fallback
+        if (!PAGE_ID || !ACCESS_TOKEN) {
+            fallback.style.display = "block";
+            return;
+        }
+
+        try {
+            const url = `https://graph.facebook.com/${PAGE_ID}/live_videos?access_token=${ACCESS_TOKEN}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (!data.data || data.data.length === 0) {
+                fallback.style.display = "block";
+                return;
+            }
+
+            const live = data.data[0];
+            const videoUrl = `https://www.facebook.com/${PAGE_ID}/videos/${live.id}/`;
+
+            const fbVideo = document.querySelector(".fb-video");
+            fbVideo.setAttribute("data-href", videoUrl);
+
+            if (window.FB) FB.XFBML.parse();
+
+        } catch (error) {
+            console.error("Erreur Facebook Live :", error);
+            fallback.style.display = "block";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadFacebookLive);
+
 
     // --- Fallback si aucun live Facebook n'est détecté ---
     setTimeout(() => {
