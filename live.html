@@ -9,7 +9,7 @@
     <meta name="description" content="Regardez les matchs du VolleyBall Club de Dompierre sur Helpe en direct grâce à notre diffusion Facebook Live.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://volleyballdompierre.fr/">
+    <link rel="canonical" href="https://volleyballdompierre.fr/live.html">
 
     <!-- SEO -->
     <meta name="keywords" content="volley dompierre, volleyball dompierre, live volley, match en direct, vb dompierre">
@@ -39,7 +39,7 @@
         connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://opensheet.elk.sh https://cdn.jsdelivr.net https://unpkg.com;
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
-        frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
+        frame-src https://www.facebook.com https://m.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -50,7 +50,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Vue / Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/axios@latest"></script>
 
     <!-- Umami -->
@@ -64,10 +64,10 @@
   <header>
     <div id="navbar-placeholder"></div>
   </header>
+  <h1 class="text-center mb-4">Match en direct – VolleyBall Dompierre</h1>
 
-  <main class="container my-5">
-    <h2 class="text-center mb-4">Direct du match</h2>
-
+  <section aria-labelledby="live-title"> 
+    <h2 id="live-title" class="text-center mb-4">Direct du match</h2>
     <div class="text-center mb-4">
       <p>Regardez le match en direct sur notre page Facebook :</p>
     </div>
@@ -79,18 +79,24 @@
           data-href="https://www.facebook.com/vbdompierre/videos/1770874900286049/"
           data-width="800"
           data-show-text="false"
-          data-autoplay="false">
+          data-autoplay="false"
+          data-allowfullscreen="true">
         </div>
       </div>
     </div>
 
     <div class="d-flex justify-content-center align-items-center mt-4">
-      <a href="https://www.facebook.com/vbdompierre" target="_blank" class="d-flex align-items-center text-decoration-none">
-        <img src="images/facebook_logo.png" alt="Facebook" width="60" class="me-3">
+      <a href="https://www.facebook.com/vbdompierre" target="_blank" rel="noopener" class="d-flex align-items-center text-decoration-none">
+        <img src="images/facebook_logo.png" alt="Logo Facebook du club" width="60" class="me-3" style="border-radius: 10%;">
         <span class="fs-5 text-dark">Suivez notre page pour ne rien manquer !</span>
       </a>
     </div>
 
+    <div class="text-center text-muted mt-3" id="live-fallback" style="display:none;">
+      Aucun live en cours pour le moment.
+    </div>
+
+  </section>
   </main>
 
   <footer>

@@ -450,6 +450,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // --- Fallback si aucun live Facebook n'est détecté ---
+    setTimeout(() => {
+        const fbIframe = document.querySelector(".fb-video iframe");
+        const fallback = document.getElementById("live-fallback");
+
+        // Si Facebook n'a pas chargé la vidéo
+        if (!fbIframe && fallback) {
+            fallback.style.display = "block";
+        }
+    }, 3000);
 
     // --- End of script.js ---
 
