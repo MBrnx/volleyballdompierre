@@ -1,3 +1,6 @@
+// --- Google Sheets ---
+const SHEET_ID = "1FBm9gqxWGxO9x5nQyjExJkZTqXg6HMg9HFLZhoYkU2s";
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- Navbar ---
@@ -204,8 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- Google Sheets ---
-    const SHEET_ID = "1FBm9gqxWGxO9x5nQyjExJkZTqXg6HMg9HFLZhoYkU2s";
-
     async function loadData(sheetName) {
     const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
     const response = await fetch(url);
