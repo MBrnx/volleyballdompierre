@@ -184,21 +184,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Sections ---
     function showSection(sectionId, btn) {
-    document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
+        // Masquer toutes les sections
+        document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
 
-    document.querySelectorAll('main button[data-section]').forEach(b => {
-        b.classList.remove('btn-success');
-        b.classList.add('btn-outline-success');
-    });
+        // Mettre à jour le style des boutons principaux
+        document.querySelectorAll('main button[data-section]').forEach(b => {
+            b.classList.remove('btn-success');
+            b.classList.add('btn-outline-success');
+        });
 
-    btn.classList.remove('btn-outline-success');
-    btn.classList.add('btn-success');
+        btn.classList.remove('btn-outline-success');
+        btn.classList.add('btn-success');
 
-    const btnFiltres = document.getElementById("btn-filtres");
-    if (btnFiltres) {
-        btnFiltres.style.display = sectionId === "evenements" ? "none" : "inline-block";
-    }
+        // Gestion du bouton Filtres
+        const btnFiltres = document.getElementById("btn-filtres");
+
+        if (sectionId === "evenements") {
+            // Pas de filtres sur Événements
+            if (btnFiltres) btnFiltres.style.display = "none";
+        }
+        else if (sectionId === "classement") {
+            // Pas de filtres sur Classement
+            if (btnFiltres) btnFiltres.style.display = "none";
+
+            // Charger le classement Excellence par défaut
+            loadClassement("Classement_Excellence");
+
+            // Activer le bon bouton interne
+            document.querySelectorAll("#classement-tabs button").forEach(b => {
+                b.classList.remove("btn-success");
+                b.classList.add("btn-outline-success");
+            });
+
+            const defaultBtn = document.querySelector('#classement-tabs button[data-classement="Classement_Excellence"]');
+            if (defaultBtn) {
+                defaultBtn.classList.remove("btn-outline-success");
+                defaultBtn.classList.add("btn-success");
+            }
+        }
+        else {
+            // Pour toutes les autres sections : filtres visibles
+            if (btnFiltres) btnFiltres.style.display = "inline-block";
+        }
     }
 
     document.querySelectorAll('main button[data-section]').forEach(btn => {
@@ -384,6 +412,69 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
 
+    // --- Classement ---
+    async function loadClassement(sheetName) {
+        const container = document.querySelector("#classement .list-group");
+        if (!container) return;
+
+        let data;
+        try {
+            data = await loadData(sheetName);
+        } catch (e) {
+            container.innerHTML = `
+                <li class="list-group-item text-center text-danger">
+                    Pas de données disponibles pour le moment
+                </li>`;
+            return;
+        }
+
+        if (!Array.isArray(data)) {
+            container.innerHTML = `
+                <li class="list-group-item text-center text-danger">
+                    Pas de données disponibles pour le moment
+                </li>`;
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.sort((a, b) => Number(a.Rang) - Number(b.Rang));
+
+        data.forEach(row => {
+            container.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${row.Rang}. ${row.Equipe}</strong><br>
+                        <small class="text-muted">
+                            ${row.MJ} MJ — ${row.MG} MG — ${row.MP} MP — ${row.Pts} pts
+                        </small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">${row.Pts} pts</span>
+                </li>
+            `;
+        });
+    }
+
+
+    document.querySelectorAll("#classement-tabs button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const sheet = btn.getAttribute("data-classement");
+
+            // Style des boutons
+            document.querySelectorAll("#classement-tabs button").forEach(b => {
+                b.classList.remove("btn-success");
+                b.classList.add("btn-outline-success");
+            });
+
+            btn.classList.remove("btn-outline-success");
+            btn.classList.add("btn-success");
+
+            loadClassement(sheet);
+        });
+    });
+
+
+
     // --- Filtres ---
     function getFilters() {
     const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
@@ -436,6 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMatchsAvenir();
     loadResultats();
     loadEvenements();
+    loadClassement();
 
     // --- Image cards ---
     document.querySelectorAll(".card-img-top").forEach(img => {
@@ -452,53 +544,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- Facebook Live ---
-    async function loadFacebookLive() {
-        const fallback = document.getElementById("live-fallback");
-
-        // Si pas encore configuré, on affiche juste le fallback
-        if (!PAGE_ID || !ACCESS_TOKEN) {
-            fallback.style.display = "block";
-            return;
-        }
-
-        try {
-            const url = `https://graph.facebook.com/${PAGE_ID}/live_videos?access_token=${ACCESS_TOKEN}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (!data.data || data.data.length === 0) {
-                fallback.style.display = "block";
-                return;
-            }
-
-            const live = data.data[0];
-            const videoUrl = `https://www.facebook.com/${PAGE_ID}/videos/${live.id}/`;
-
-            const fbVideo = document.querySelector(".fb-video");
-            fbVideo.setAttribute("data-href", videoUrl);
-
-            if (window.FB) FB.XFBML.parse();
-
-        } catch (error) {
-            console.error("Erreur Facebook Live :", error);
-            fallback.style.display = "block";
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", loadFacebookLive);
-
-
-    // --- Fallback si aucun live Facebook n'est détecté ---
-    setTimeout(() => {
-        const fbIframe = document.querySelector(".fb-video iframe");
-        const fallback = document.getElementById("live-fallback");
-
-        // Si Facebook n'a pas chargé la vidéo
-        if (!fbIframe && fallback) {
-            fallback.style.display = "block";
-        }
-    }, 3000);
 
     /* // --- DARK MODE ---
 
