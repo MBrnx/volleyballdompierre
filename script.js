@@ -227,6 +227,22 @@ document.addEventListener("DOMContentLoaded", () => {
             // Pour toutes les autres sections : filtres visibles
             if (btnFiltres) btnFiltres.style.display = "inline-block";
         }
+                // Pour toutes les sections qui utilisent les filtres (avenir + resultats)
+        if (sectionId === "avenir" || sectionId === "resultats") {
+
+            // Décocher toutes les équipes
+            document.querySelectorAll(".filter-equipe").forEach(cb => {
+                cb.checked = false;
+            });
+
+            // Remettre le lieu sur "tous"
+            const lieuTous = document.querySelector('input[name="filter-lieu"][value="tous"]');
+            if (lieuTous) lieuTous.checked = true;
+
+            // Recharger les données
+            loadMatchsAvenir();
+            loadResultats();
+        }
     }
 
     document.querySelectorAll('main button[data-section]').forEach(btn => {
@@ -446,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div>
                         <strong>${row.Rang}. ${row.Equipe}</strong><br>
                         <small class="text-muted">
-                            ${row.MJ} MJ — ${row.MG} MG — ${row.MP} MP — ${row.Pts} pts
+                            ${row.MJ} MJ — ${row.MG} MG — ${row.MP} MP — ${row.MB} MB
                         </small>
                     </div>
                     <span class="badge bg-primary rounded-pill">${row.Pts} pts</span>
@@ -477,22 +493,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Filtres ---
     function getFilters() {
-    const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
-    const selectedEquipes = Array.from(equipeCheckboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
+        const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
 
-    const lieuRadio = document.querySelector(".filter-lieu:checked");
-    const lieu = lieuRadio ? lieuRadio.value : "tous";
+        let selectedEquipes = Array.from(equipeCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
 
-    return { equipes: selectedEquipes, lieu };
+        // Si aucune équipe n'est cochée → toutes les équipes sont sélectionnées
+        if (selectedEquipes.length === 0) {
+            selectedEquipes = Array.from(equipeCheckboxes).map(cb => cb.value);
+        }
+
+        const lieuRadio = document.querySelector(".filter-lieu:checked");
+        const lieu = lieuRadio ? lieuRadio.value : "tous";
+
+        return { equipes: selectedEquipes, lieu };
     }
 
     document.querySelectorAll(".filter-equipe, .filter-lieu").forEach(input => {
-    input.addEventListener("change", () => {
-        loadMatchsAvenir();
-        loadResultats();
-    });
+        input.addEventListener("change", () => {
+            loadMatchsAvenir();
+            loadResultats();
+        });
     });
 
     // --- Bouton filtres ---
@@ -542,6 +564,23 @@ document.addEventListener("DOMContentLoaded", () => {
         img.addEventListener("click", () => {
             document.getElementById('modalImage').src = img.src;
         });
+    });
+
+    // --- Reset filtres au premier chargement ---
+    window.addEventListener("DOMContentLoaded", () => {
+
+        // Décocher toutes les équipes
+        document.querySelectorAll(".filter-equipe").forEach(cb => {
+            cb.checked = false;
+        });
+
+        // Lieu = tous
+        const lieuTous = document.querySelector('input[name="filter-lieu"][value="tous"]');
+        if (lieuTous) lieuTous.checked = true;
+
+        // Charger les données
+        loadMatchsAvenir();
+        loadResultats();
     });
 
 
