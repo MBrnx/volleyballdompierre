@@ -581,6 +581,34 @@ img[alt="Facebook"] {
   }
 }
 
+/* Empêche le débordement horizontal sur mobile */
+.card-actu {
+  overflow-x: hidden;
+}
+
+/* Sur mobile : forcer le texte à prendre toute la largeur */
+@media (max-width: 767px) {
+  .actu-row {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .actu-texte {
+    width: 100%;
+  }
+
+  .actu-image-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .actu-image {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 
 /*
 /* --- Transition douce --- 

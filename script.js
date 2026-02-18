@@ -144,6 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return new Date(str);
     }
 
+    function makeLinksClickable(text) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, url => {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        });
+    }
+
     function createActuCard(author, content, image = null, date = null) {
         if (!actusList) return; // 🔥 Correction
 
@@ -165,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <strong>${author}</strong>
                     <small class="text-muted">${dateStr}</small>
                 </div>
-                <p>${content}</p>
+                <p>${makeLinksClickable(content)}</p>
                 </div>
 
                 ${image ? `
@@ -436,7 +443,9 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML += `
         <li class="list-group-item">
             <strong>${row.titre}</strong><br>
-            <small>${row.description}</small>
+            <div class="event-description">
+                ${makeLinksClickable(row.description)}
+            </div>
         </li>`;
     });
     }
