@@ -158,12 +158,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         card.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div><strong>${author}</strong> <small class="text-muted">${dateStr}</small></div>
-        </div>
-        <p>${content}</p>
-        ${image ? `<img src="${image}" class="img-fluid rounded mt-2">` : ""}
+            <div class="actu-row d-flex flex-column flex-md-row align-items-start gap-3">
+
+                <div class="actu-texte flex-grow-1">
+                <div class="mb-2">
+                    <strong>${author}</strong>
+                    <small class="text-muted">${dateStr}</small>
+                </div>
+                <p>${content}</p>
+                </div>
+
+                ${image ? `
+                <div class="actu-image-wrapper d-flex justify-content-center">
+                    <img src="${image}" class="actu-image img-fluid rounded">
+                </div>
+                ` : ""}
+            </div>
         `;
+
+
 
         if (!actusList) return;
         actusList.append(card);
@@ -583,6 +596,10 @@ document.addEventListener("DOMContentLoaded", () => {
         loadResultats();
     });
 
+    function changeMainLive(channelId) {
+        document.getElementById("mainLivePlayer").src =
+            "https://www.youtube.com/embed/live_stream?channel=" + channelId;
+    }
 
     /* // --- DARK MODE ---
 

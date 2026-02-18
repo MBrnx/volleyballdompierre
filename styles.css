@@ -531,6 +531,57 @@ img[alt="Facebook"] {
     width: 100% !important;
 }
 
+.multiplex-thumb iframe {
+    width: 100%;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+    }
+
+.multiplex-thumb {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.multiplex-thumb:hover {
+    transform: scale(1.02);
+}
+
+#mainLivePlayer {
+    width: 100%;
+    height: 500px; 
+    border-radius: 8px;
+}
+
+.card-actu .actu-image-wrapper {
+  flex-shrink: 0;
+}
+
+.card-actu .actu-image {
+  max-width: 260px; /* ajuste comme tu veux */
+}
+
+/* Conteneur image */
+.actu-image-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center; /* centre verticalement par rapport au texte */
+}
+
+/* Taille de l'image */
+.actu-image {
+  max-width: 320px;   /* plus grande */
+  border-radius: 10px;
+}
+
+/* Sur PC : texte à gauche, image à droite */
+@media (min-width: 768px) {
+  .actu-row {
+    align-items: center; /* centre verticalement texte + image */
+  }
+}
+
+
 /*
 /* --- Transition douce --- 
 * {
