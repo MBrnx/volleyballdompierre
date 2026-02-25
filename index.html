@@ -69,6 +69,11 @@
                     },
                 },
             });
+            // Forcer l'affichage du prompt si pas encore abonné
+            const permission = await OneSignal.Notifications.permission;
+            if (!permission) {
+                await OneSignal.Slidedown.promptPush();
+            }
         });
     </script>
 </head>
