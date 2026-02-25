@@ -609,6 +609,11 @@ img[alt="Facebook"] {
   }
 }
 
+#onesignal-bell-container {
+    left: 20px !important;
+    right: auto !important;
+}
+
 
 /*
 /* --- Transition douce --- 
