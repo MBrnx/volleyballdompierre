@@ -598,7 +598,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMatchsAvenir();
     loadResultats();
     loadEvenements();
-    loadClassement();
+    loadClassement("Classement_Avesnois");
 
     // --- Image cards ---
     document.querySelectorAll(".card-img-top").forEach(img => {
