@@ -84,6 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const actusList = document.getElementById("actus-list");
     const form = document.getElementById("add-actu-form");
 
+    // --- Pagination ---
+    const NB_PAR_PAGE = 5;
+    let actusData = [];
+    let nbVisible = NB_PAR_PAGE;
+
     // --- Lightbox ---
     const lightbox = document.createElement("div");
     lightbox.id = "lightbox";
@@ -116,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseImages(imageField) {
         if (!imageField) return [];
         return imageField
-            .split(/[\s,]+/) 
+            .split(/[\s,]+/) // gère espaces + virgules
             .map(i => i.trim())
             .filter(i => i.length > 0);
     }
@@ -133,11 +138,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return db - da;
         });
 
+        actusData = data;
+        nbVisible = NB_PAR_PAGE;
+
+        afficherActus();
+    }
+
+    function afficherActus() {
+        if (!actusList) return;
+
         actusList.innerHTML = "";
 
-        for (const a of data) {
-            await createActuCard(a.author, a.content, a.image, a.date);
-        }
+        actusData.forEach(a => {
+            createActuCard(a.author, a.content, a.image, a.date);
+        });
     }
 
     function parseFrenchDate(str) {
@@ -160,8 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Nouvelle version de createActuCard ---
-    async function createActuCard(author, content, image = null, date = null) {
+    function createActuCard(author, content, image = null, date = null) {
         if (!actusList) return;
 
         const card = document.createElement("div");
@@ -178,20 +191,15 @@ document.addEventListener("DOMContentLoaded", () => {
         let imagesHTML = "";
 
         for (const img of images) {
-            let finalURL = img;
-
-            if (finalURL) {
-                imagesHTML += `
-                    <div class="actu-image-wrapper d-flex justify-content-center mb-2">
-                        <img src="${finalURL}" class="actu-image img-fluid rounded">
-                    </div>
-                `;
-            }
+            imagesHTML += `
+                <div class="actu-image-wrapper d-flex justify-content-center mb-2">
+                    <img src="${img}" class="actu-image img-fluid rounded">
+                </div>
+            `;
         }
 
         card.innerHTML = `
             <div class="actu-row d-flex flex-column flex-md-row align-items-start gap-3">
-
                 <div class="actu-texte flex-grow-1">
                     <div class="mb-2">
                         <strong>${author}</strong>
@@ -203,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="actu-images flex-grow-1">
                     ${imagesHTML}
                 </div>
-
             </div>
         `;
 
@@ -590,7 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMatchsAvenir();
     loadResultats();
     loadEvenements();
-    loadClassement();
+    loadClassement("Classement_Avesnois");
 
     // --- Image cards ---
     document.querySelectorAll(".card-img-top").forEach(img => {
