@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseImages(imageField) {
         if (!imageField) return [];
         return imageField
-            .split(/[\s,]+/) // gère espaces + virgules
+            .split(/[\s,\n\r]+/)   // gère espaces, virgules, retours à la ligne
             .map(i => i.trim())
             .filter(i => i.length > 0);
     }
