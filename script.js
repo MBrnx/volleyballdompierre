@@ -112,23 +112,32 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // --- Plusieurs images ---
+    function parseImages(imageField) {
+        if (!imageField) return [];
+        return imageField
+            .split(/[\s,]+/) 
+            .map(i => i.trim())
+            .filter(i => i.length > 0);
+    }
+
     // --- Chargement des actus ---
     async function loadActus() {
-        if (!actusList) return; // 🔥 Correction
+        if (!actusList) return;
 
         const data = await loadData("actualites");
 
         data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return db - da;
+            const da = new Date(a.date.split("/").reverse().join("-"));
+            const db = new Date(b.date.split("/").reverse().join("-"));
+            return db - da;
         });
 
         actusList.innerHTML = "";
 
-        data.forEach(a => {
-        createActuCard(a.author, a.content, a.image, a.date);
-        });
+        for (const a of data) {
+            await createActuCard(a.author, a.content, a.image, a.date);
+        }
     }
 
     function parseFrenchDate(str) {
@@ -137,8 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return new Date(str);
 
         if (str.includes("/")) {
-        const [day, month, year] = str.split("/");
-        return new Date(`${year}-${month}-${day}`);
+            const [day, month, year] = str.split("/");
+            return new Date(`${year}-${month}-${day}`);
         }
 
         return new Date(str);
@@ -151,54 +160,64 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function createActuCard(author, content, image = null, date = null) {
-        if (!actusList) return; // 🔥 Correction
+    // --- Nouvelle version de createActuCard ---
+    async function createActuCard(author, content, image = null, date = null) {
+        if (!actusList) return;
 
         const card = document.createElement("div");
         card.classList.add("card", "card-actu", "p-3", "mb-3");
 
         const dateObj = parseFrenchDate(date);
         const dateStr = dateObj.toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
+            day: "numeric",
+            month: "long",
+            year: "numeric"
         });
+
+        const images = parseImages(image);
+        let imagesHTML = "";
+
+        for (const img of images) {
+            let finalURL = img;
+
+            if (finalURL) {
+                imagesHTML += `
+                    <div class="actu-image-wrapper d-flex justify-content-center mb-2">
+                        <img src="${finalURL}" class="actu-image img-fluid rounded">
+                    </div>
+                `;
+            }
+        }
 
         card.innerHTML = `
             <div class="actu-row d-flex flex-column flex-md-row align-items-start gap-3">
 
                 <div class="actu-texte flex-grow-1">
-                <div class="mb-2">
-                    <strong>${author}</strong>
-                    <small class="text-muted">${dateStr}</small>
-                </div>
-                <p>${makeLinksClickable(content)}</p>
+                    <div class="mb-2">
+                        <strong>${author}</strong>
+                        <small class="text-muted">${dateStr}</small>
+                    </div>
+                    <p>${makeLinksClickable(content)}</p>
                 </div>
 
-                ${image ? `
-                <div class="actu-image-wrapper d-flex justify-content-center">
-                    <img src="${image}" class="actu-image img-fluid rounded">
+                <div class="actu-images flex-grow-1">
+                    ${imagesHTML}
                 </div>
-                ` : ""}
+
             </div>
         `;
 
-
-
-        if (!actusList) return;
         actusList.append(card);
 
-
-        const imgEl = card.querySelector("img");
-        if (imgEl) enableLightbox(imgEl);
+        card.querySelectorAll("img").forEach(img => enableLightbox(img));
     }
 
     loadActus();
 
     if (form) {
         form.addEventListener("submit", e => {
-        e.preventDefault();
-        alert("L’ajout d’actus est désactivé.");
+            e.preventDefault();
+            alert("L’ajout d’actus est désactivé.");
         });
     }
 
