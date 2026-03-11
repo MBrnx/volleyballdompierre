@@ -142,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nbVisible = NB_PAR_PAGE;
 
         afficherActus();
+        updateLoadMoreButton(); 
     }
 
     function afficherActus() {
@@ -149,8 +150,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
         actusList.innerHTML = "";
 
-        actusData.forEach(a => {
+        actusData.slice(0, nbVisible).forEach(a => {
             createActuCard(a.author, a.content, a.image, a.date);
+        });
+    }
+
+    const btnLoadMore = document.getElementById("load-more");
+    const actusInfo = document.getElementById("actus-info");
+
+    function updateLoadMoreButton() {
+        if (!btnLoadMore || !actusInfo) return;
+
+        const reste = actusData.length - nbVisible;
+
+        if (reste <= 0) {
+            btnLoadMore.style.display = "none";
+            actusInfo.textContent = "Tu as vu toutes les actualités 🎉";
+            return;
+        }
+
+        const prochain = Math.min(NB_PAR_PAGE, reste);
+
+        btnLoadMore.textContent = 
+            reste > NB_PAR_PAGE
+            ? `Afficher ${prochain} actus supplémentaires (${reste} restantes)`
+            : `Afficher les ${reste} dernières actus`;
+
+        btnLoadMore.style.display = "inline-block";
+
+        actusInfo.textContent = `${nbVisible} actus affichées sur ${actusData.length}`;
+    }
+
+    if (btnLoadMore) {
+        btnLoadMore.addEventListener("click", () => {
+            nbVisible += NB_PAR_PAGE;
+            afficherActus();
+            updateLoadMoreButton();
         });
     }
 
