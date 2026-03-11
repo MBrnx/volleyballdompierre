@@ -617,6 +617,25 @@ img[alt="Facebook"] {
     z-index: 99999 !important;
 }
 
+/* Conteneur image */
+.actu-image-single {
+    flex-shrink: 0;
+    width: 280px;        /* largeur fixe propre */
+}
+
+/* Image non coupée, ratio respecté */
+.actu-image-single img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Texte sans scroll, hauteur naturelle */
+.single-image-text {
+    padding-right: 10px;
+}
+
+
 
 /*
 /* --- Transition douce --- 

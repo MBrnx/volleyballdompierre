@@ -227,32 +227,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (const img of images) {
             imagesHTML += `
-                <div class="actu-image-wrapper d-flex justify-content-center mb-2">
-                    <img src="${img}" class="actu-image img-fluid rounded">
+                <div class="actu-image-wrapper">
+                    <img src="${img}" class="actu-image img-fluid rounded" style="max-width:180px;">
                 </div>
             `;
         }
 
-        card.innerHTML = `
-            <div class="actu-row d-flex flex-column flex-md-row align-items-start gap-3">
-                <div class="actu-texte flex-grow-1">
-                    <div class="mb-2">
-                        <strong>${author}</strong>
-                        <small class="text-muted">${dateStr}</small>
+        // --- 1 seule image → à droite
+        if (images.length === 1) {
+            card.innerHTML = `
+                <div class="actu-row d-flex flex-column flex-md-row align-items-stretch gap-3">
+                    
+                    <div class="actu-texte flex-grow-1 single-image-text">
+                        <div class="mb-2">
+                            <strong>${author}</strong>
+                            <small class="text-muted">${dateStr}</small>
+                        </div>
+                        <p>${makeLinksClickable(content)}</p>
                     </div>
-                    <p>${makeLinksClickable(content)}</p>
-                </div>
 
-                <div class="actu-images flex-grow-1">
-                    ${imagesHTML}
+                    <div class="actu-image-single">
+                        <img src="${images[0]}" class="actu-img-fill">
+                    </div>
+
                 </div>
-            </div>
-        `;
+            `;
+        }
+
+
+        // --- Plusieurs images → sous le texte, en ligne
+        else {
+            card.innerHTML = `
+                <div class="actu-row d-flex flex-column gap-3">
+                    <div class="actu-texte">
+                        <div class="mb-2">
+                            <strong>${author}</strong>
+                            <small class="text-muted">${dateStr}</small>
+                        </div>
+                        <p>${makeLinksClickable(content)}</p>
+                    </div>
+
+                    <div class="actu-images d-flex flex-wrap gap-2">
+                        ${imagesHTML}
+                    </div>
+                </div>
+            `;
+        }
 
         actusList.append(card);
 
+        // Lightbox sur toutes les images
         card.querySelectorAll("img").forEach(img => enableLightbox(img));
     }
+
+
 
     loadActus();
 
