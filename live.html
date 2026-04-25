@@ -41,7 +41,7 @@
         connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://opensheet.elk.sh https://cdn.jsdelivr.net https://unpkg.com;
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
-        frame-src https://www.facebook.com https://m.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
+        frame-src https://www.facebook.com https://m.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com;
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -101,6 +101,29 @@
     </div>
 </section>
 
+<section aria-labelledby="youtube-live-title" class="mt-5">
+    <h2 id="youtube-live-title" class="text-center mb-4">Live YouTube – VolleyBall Dompierre</h2>
+
+    <div id="live-container" class="d-flex justify-content-center">
+        <div class="p-4 border rounded shadow-sm text-center" style="max-width: 800px; width: 100%;">
+            
+            <!-- Zone dynamique -->
+            <div id="live-content">
+                <p class="text-center text-muted">Chargement du statut du live…</p>
+            </div>
+
+            <div class="mt-4">
+                <a href="https://www.youtube.com/@VolleyBallDompierresurHelpeA"
+                   target="_blank"
+                   rel="noopener"
+                   class="btn btn-danger btn-lg">
+                    ▶️ Aller sur la chaîne YouTube
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
   </main>
 
   <footer>
@@ -112,6 +135,53 @@
   <script async defer crossorigin="anonymous"
           src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v17.0">
   </script>
+
+    <script>
+    const API_KEY = "AlzaSyCDXVrJnLwEOGTcJeRtvBJK-MsWx2bi0lw";
+    const CHANNEL_ID = "UC5s-uZuZifwvuuVujHY6ePQ";
+
+    async function checkLive() {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const container = document.getElementById("live-content");
+
+            if (data.items && data.items.length > 0) {
+                // Un live est en cours
+                const liveId = data.items[0].id.videoId;
+
+                container.innerHTML = `
+                    <div class="ratio ratio-16x9 mb-3">
+                        <iframe 
+                            src="https://www.youtube.com/embed/${liveId}"
+                            title="YouTube Live"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <h3 class="mb-3">Live en cours</h3>
+                    <p class="text-muted">Le match est actuellement diffusé en direct.</p>
+                `;
+            } else {
+                // Aucun live
+                container.innerHTML = `
+                    <h3 class="mb-3">Aucun live pour le moment</h3>
+                    <p class="text-muted">Revenez plus tard ou abonnez‑vous pour être notifié des prochains lives.</p>
+                `;
+            }
+        } catch (error) {
+            console.error("Erreur API YouTube :", error);
+            document.getElementById("live-content").innerHTML =
+                "<p class='text-danger'>Impossible de vérifier le statut du live.</p>";
+        }
+    }
+
+    checkLive();
+    </script>
 
   <script src="script.js"></script>
 </body>
