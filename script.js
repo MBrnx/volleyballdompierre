@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (btnFiltres) btnFiltres.style.display = "none";
 
             // Charger le classement Excellence par défaut
-            loadClassement("Classement_Excellence");
+            loadClassement("Classement_Avesnois");
 
             // Activer le bon bouton interne
             document.querySelectorAll("#classement-tabs button").forEach(b => {
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 b.classList.add("btn-outline-success");
             });
 
-            const defaultBtn = document.querySelector('#classement-tabs button[data-classement="Classement_Excellence"]');
+            const defaultBtn = document.querySelector('#classement-tabs button[data-classement="Classement_Avesnois"]');
             if (defaultBtn) {
                 defaultBtn.classList.remove("btn-outline-success");
                 defaultBtn.classList.add("btn-success");
