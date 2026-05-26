@@ -142,10 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
             .map(i => i.trim())
             .filter(i => i.length > 0)
             .map(i => {
-                const isFull = i.startsWith("full:");
+                const parts = i.split(" ").map(p => p.trim());
                 return {
-                    url: isFull ? i.replace("full:", "") : i,
-                    full: isFull
+                    url: parts[0],
+                    full: parts[1] === "full"
                 };
             });
     }
