@@ -134,8 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
     function parseImages(imageField) {
         if (!imageField) return [];
 
@@ -144,14 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
             .map(i => i.trim())
             .filter(i => i.length > 0)
             .map(i => {
-                const isFull = i.includes("#full");
+                const isFull = i.startsWith("full:");
                 return {
-                    url: i.replace("#full", ""),
+                    url: isFull ? i.replace("full:", "") : i,
                     full: isFull
                 };
             });
     }
-
 
     // --- Chargement des actus ---
     async function loadActus() {
