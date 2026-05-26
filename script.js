@@ -138,11 +138,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!imageField) return [];
 
         return imageField
-            .split(/[\s,\n\r]+/)
+            .split(/[\s,\n\r]+/) // découpe sur espaces, tab, retours à la ligne, virgules
             .map(i => i.trim())
             .filter(i => i.length > 0)
             .map(i => {
-                const parts = i.split(" ").map(p => p.trim());
+                const parts = i.split("|").map(p => p.trim());
                 return {
                     url: parts[0],
                     full: parts[1] === "full"
