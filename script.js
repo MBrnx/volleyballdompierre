@@ -262,27 +262,41 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }
 
-        // --- 1 seule image → à droite
+        // --- 1 seule image ---
         if (images.length === 1) {
-            card.innerHTML = `
-                <div class="actu-row d-flex flex-column flex-md-row align-items-stretch gap-3">
-                    
-                    <div class="actu-texte flex-grow-1 single-image-text">
+            const hasText = content && content.trim().length > 0;
+
+            if (hasText) {
+                // Texte à gauche, image à droite
+                card.innerHTML = `
+                    <div class="actu-row d-flex flex-column flex-md-row align-items-stretch gap-3">
+                        <div class="actu-texte flex-grow-1 single-image-text">
+                            <div class="mb-2">
+                                <strong>${author}</strong>
+                                <small class="text-muted">${dateStr}</small>
+                            </div>
+                            <p>${makeLinksClickable(content)}</p>
+                        </div>
+                        <div class="actu-image-single">
+                            <img src="${images[0].url}" data-full="${images[0].full}" class="actu-img-fill">
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Pas de texte → image centrée, plus grande
+                card.innerHTML = `
+                    <div class="text-center">
                         <div class="mb-2">
                             <strong>${author}</strong>
                             <small class="text-muted">${dateStr}</small>
                         </div>
-                        <p>${makeLinksClickable(content)}</p>
+                        <img src="${images[0].url}" data-full="${images[0].full}"
+                            class="img-fluid rounded"
+                            style="max-height: 500px; width: auto; max-width: 100%; cursor: pointer;">
                     </div>
-
-                    <div class="actu-image-single">
-                        <img src="${images[0].url}" data-full="${images[0].full}" class="actu-img-fill">
-                    </div>
-
-                </div>
-            `;
+                `;
+            }
         }
-
 
         // --- Plusieurs images → sous le texte, en ligne
         else {

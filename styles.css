@@ -574,6 +574,13 @@ img[alt="Facebook"] {
   border-radius: 10px;
 }
 
+.actu-img-fill {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
 /* Sur PC : texte à gauche, image à droite */
 @media (min-width: 768px) {
   .actu-row {
