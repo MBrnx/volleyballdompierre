@@ -137,17 +137,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseImages(imageField) {
         if (!imageField) return [];
 
-        return imageField
-            .split(/[\s,\n\r]+/) // découpe sur espaces, tab, retours à la ligne, virgules
+        // 1) On sépare les images (une par ligne, ou séparées par virgule)
+        const rawImages = imageField
+            .split(/[,;\n\r]+/) // séparateurs autorisés
             .map(i => i.trim())
-            .filter(i => i.length > 0)
-            .map(i => {
-                const parts = i.split("|").map(p => p.trim());
-                return {
-                    url: parts[0],
-                    full: parts[1] === "full"
-                };
-            });
+            .filter(i => i.length > 0);
+
+        // 2) On analyse chaque image individuellement
+        return rawImages.map(i => {
+            // On sépare l’URL et le tag éventuel
+            const parts = i.split("|").map(p => p.trim());
+
+            return {
+                url: parts[0],            // l’URL propre
+                full: parts[1] === "full" // tag détecté
+            };
+        });
     }
 
     // --- Chargement des actus ---
