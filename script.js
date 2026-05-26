@@ -111,20 +111,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function enableLightbox(img) {
         img.style.cursor = "pointer";
+
         img.addEventListener("click", () => {
-            lbImg.src = img.src;
-            lightbox.style.display = "flex";
+
+            const isFull = img.dataset.full === "true";
+
+            if (isFull) {
+                // Mode plein écran
+                lbImg.src = img.src;
+                lbImg.style.maxWidth = "100%";
+                lbImg.style.maxHeight = "100%";
+                lightbox.style.background = "rgba(0,0,0,0.95)";
+                lightbox.style.display = "flex";
+            } else {
+                // Lightbox normale
+                lbImg.src = img.src;
+                lbImg.style.maxWidth = "90%";
+                lbImg.style.maxHeight = "90%";
+                lightbox.style.background = "rgba(0,0,0,0.85)";
+                lightbox.style.display = "flex";
+            }
         });
     }
 
-    // --- Plusieurs images ---
+
+
     function parseImages(imageField) {
         if (!imageField) return [];
+
         return imageField
-            .split(/[\s,\n\r]+/)   // gère espaces, virgules, retours à la ligne
+            .split(/[\s,\n\r]+/)
             .map(i => i.trim())
-            .filter(i => i.length > 0);
+            .filter(i => i.length > 0)
+            .map(i => {
+                const isFull = i.includes("#full");
+                return {
+                    url: i.replace("#full", ""),
+                    full: isFull
+                };
+            });
     }
+
 
     // --- Chargement des actus ---
     async function loadActus() {
@@ -228,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
         for (const img of images) {
             imagesHTML += `
                 <div class="actu-image-wrapper">
-                    <img src="${img}" class="actu-image img-fluid rounded" style="max-width:180px;">
+                    <img src="${img.url}" data-full="${img.full}" class="actu-image img-fluid rounded" style="max-width:180px;">
                 </div>
             `;
         }
@@ -247,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <div class="actu-image-single">
-                        <img src="${images[0]}" class="actu-img-fill">
+                        <img src="${images[0].url}" data-full="${images[0].full}" class="actu-img-fill">
                     </div>
 
                 </div>
