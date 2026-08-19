@@ -1,5 +1,5 @@
 // --- Google Sheets ---
-const SHEET_ID = "1FBm9gqxWGxO9x5nQyjExJkZTqXg6HMg9HFLZhoYkU2s";
+const SHEET_ID = "1wtpLYneJyQFe4-o90XLFzhWs2oXaWi6vhUMq55__d6o"; // ID de la feuille Google Sheets
 const PAGE_ID = ""; 
 const ACCESS_TOKEN = "";
 
@@ -576,7 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <li class="list-group-item">
             <strong>${row.titre}</strong><br>
             <div class="event-description">
-                ${makeLinksClickable(row.description)}
+                ${makeLinksClickable(row.description).replace(/\n/g, '<br>')}
             </div>
         </li>`;
     });

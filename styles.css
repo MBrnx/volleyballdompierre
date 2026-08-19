@@ -642,6 +642,15 @@ img[alt="Facebook"] {
     padding-right: 10px;
 }
 
+.event-description {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.event-description a {
+    word-break: break-all;
+}
 
 
 /*

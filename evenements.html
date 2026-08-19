@@ -39,7 +39,15 @@
         default-src 'self';
         img-src 'self' https: data:;
         script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
-        connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://opensheet.elk.sh https://cdn.jsdelivr.net https://unpkg.com;
+        connect-src 'self'
+                    https://gateway.umami.is
+                    https://gateway.umami.is/api
+                    https://cloud.umami.is
+                    https://api-gateway.umami.dev
+                    https://opensheet.elk.sh
+                    https://cdn.jsdelivr.net
+                    https://unpkg.com
+                    https://www.googleapis.com;
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
         frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
@@ -111,8 +119,18 @@
                 </label>
 
                 <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Dompierre E" checked>
+                    Dompierre E
+                </label>
+
+                <label class="filter-chip">
                     <input type="checkbox" class="filter-equipe" value="Féminines" checked>
-                    Féminines
+                    Féminines A
+                </label>
+
+                <label class="filter-chip">
+                    <input type="checkbox" class="filter-equipe" value="Féminines B" checked>
+                    Féminines B
                 </label>
 
                 <label class="filter-chip">

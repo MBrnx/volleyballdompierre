@@ -8,181 +8,464 @@
     <meta name="apple-mobile-web-app-title" content="VolleyBall Dompierre-sur-Helpe">
 
     <title>Live Match – VolleyBall Dompierre</title>
-    <meta name="description" content="Regardez les matchs du VolleyBall Club de Dompierre sur Helpe en direct grâce à notre diffusion Facebook Live.">
+    <meta name="description" content="Regardez les matchs du VolleyBall Club de Dompierre sur Helpe en direct sur YouTube.">
 
-    <!-- Canonical -->
     <link rel="canonical" href="https://volleyballdompierre.fr/live.html">
-
-    <!-- SEO -->
     <meta name="keywords" content="volley dompierre, volleyball dompierre, live volley, match en direct, vb dompierre">
 
-    <!-- OpenGraph -->
     <meta property="og:title" content="Live Match – VolleyBall Dompierre">
     <meta property="og:description" content="Suivez les matchs du club en direct.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://volleyballdompierre.fr/images/LogoDompierre.png">
     <meta property="og:site_name" content="VolleyBall Club de Dompierre-sur-Helpe">
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Live Match – VolleyBall Dompierre">
     <meta name="twitter:description" content="Suivez les matchs du club en direct.">
     <meta name="twitter:image" content="https://volleyballdompierre.fr/images/LogoDompierre.png">
-    
-    <!-- Favicon -->
+
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
 
-    <!-- Sécurité -->
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         img-src 'self' https: data:;
-        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
-        connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://opensheet.elk.sh https://cdn.jsdelivr.net https://unpkg.com https://www.googleapis.com;
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cloud.umami.is;
+        connect-src 'self'
+                    https://gateway.umami.is
+                    https://gateway.umami.is/api/send
+                    https://cloud.umami.is
+                    https://api-gateway.umami.dev
+                    https://opensheet.elk.sh
+                    https://cdn.jsdelivr.net
+                    https://unpkg.com
+                    https://www.googleapis.com;
         style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
-        frame-src https://www.facebook.com https://m.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com;
+        frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
 
-    <!-- CSS & JS -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Vue / Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.prod.js"></script>
-    <script src="https://unpkg.com/axios@latest"></script>
-
-    <!-- Umami -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="2e96f38a-bb0a-408f-bbbc-8419c2601b52"></script>
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* ── Palette & tokens ── */
+        :root {
+            --yt-red:    #FF0000;
+            --yt-dark:   #0f0f0f;
+            --green:     #198754;
+            --green-lt:  #e9f5ef;
+            --card-bg:   #ffffff;
+            --muted:     #6c757d;
+            --radius:    12px;
+            --shadow:    0 4px 16px rgba(0,0,0,.10);
+        }
+
+        /* ── Page header ── */
+        .live-hero {
+            background: linear-gradient(135deg, #198754 0%, #0d5c38 100%);
+            color: #fff;
+            padding: 2.5rem 1rem 2rem;
+            text-align: center;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin-bottom: 2rem;
+        }
+        .live-hero h1 {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: .4rem;
+        }
+        .live-hero p { opacity: .85; margin: 0; }
+
+        /* ── Status badge ── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--yt-red);
+            color: #fff;
+            font-weight: 700;
+            font-size: .85rem;
+            letter-spacing: .05em;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .badge-live .dot {
+            width: 8px; height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+        /* ── Lecteur principal ── */
+        .main-player-wrap {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: #000;
+            margin-bottom: 1.25rem;
+        }
+        .main-player-wrap .ratio { border-radius: var(--radius); overflow: hidden; }
+
+        /* ── Titre du live actif ── */
+        .main-player-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: .6rem 0;
+            margin-bottom: .5rem;
+        }
+        .main-player-label .team-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #212529;
+        }
+        .main-player-label .live-pill {
+            background: var(--yt-red);
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: .08em;
+        }
+
+        /* ── Miniatures ── */
+        .thumbs-row {
+            display: flex;
+            gap: .75rem;
+            overflow-x: auto;
+            padding-bottom: .5rem;
+            scrollbar-width: thin;
+        }
+        .thumb-card {
+            flex: 0 0 180px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            transition: border-color .2s, transform .15s;
+        }
+        .thumb-card:hover   { transform: translateY(-2px); border-color: var(--green); }
+        .thumb-card.active  { border-color: var(--yt-red); }
+        .thumb-card iframe  { display: block; width: 100%; height: 100px; pointer-events: none; }
+        .thumb-label {
+            padding: 6px 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: #212529;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .thumb-label .mini-pill {
+            background: var(--yt-red);
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        /* ── Aucun live ── */
+        .no-live-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: var(--muted);
+        }
+        .no-live-box .icon { font-size: 3rem; margin-bottom: .75rem; }
+        .no-live-box h3 { color: #212529; font-weight: 700; margin-bottom: .4rem; }
+
+        /* ── Liens chaînes ── */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: .75rem;
+            margin-top: 1.5rem;
+        }
+        .channel-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: .75rem 1rem;
+            border-radius: 10px;
+            background: var(--green-lt);
+            color: var(--green);
+            font-weight: 600;
+            font-size: .88rem;
+            text-decoration: none;
+            border: 1.5px solid transparent;
+            transition: border-color .2s, background .2s;
+        }
+        .channel-link:hover {
+            border-color: var(--green);
+            background: #d4edda;
+            color: var(--green);
+        }
+        .channel-link .yt-icon { flex-shrink: 0; }
+
+        /* ── Spinner ── */
+        .spinner-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        .spinner-border { color: var(--green); }
+
+        /* ── Responsive ── */
+        @media (max-width: 576px) {
+            .thumb-card { flex: 0 0 150px; }
+            .thumb-card iframe { height: 85px; }
+        }
+    </style>
 </head>
 
 <body>
-  <header>
+<header>
     <div id="navbar-placeholder"></div>
-  </header>
-  <h1 class="text-center mb-4">Match en direct – VolleyBall Dompierre</h1>
+</header>
 
-<section aria-labelledby="live-title"> 
-    <h2 id="live-title" class="text-center mb-4">Direct du match</h2>
+<div class="live-hero">
+    <h1>🔴 Matchs en direct</h1>
+    <p>Suivez nos équipes en live sur YouTube</p>
+</div>
 
-    <div class="text-center mb-4">
-        <p>Le match est diffusé en direct sur notre page Facebook.</p>
-    </div>
+<main class="container pb-5">
 
-    <div class="d-flex justify-content-center">
-        <div class="p-4 border rounded shadow-sm text-center" style="max-width: 500px;">
-            <img src="images/facebook_logo.png" alt="Facebook Live" width="80" class="mb-3" style="border-radius: 10%;">
-            
-            <h3 class="mb-3">Regarder le live</h3>
-            <p class="text-muted mb-4">
-                Cliquez sur le bouton ci‑dessous pour suivre le match en direct sur Facebook.
-            </p>
-
-            <a href="https://www.facebook.com/vbdompierre/live_videos" 
-               target="_blank" 
-               rel="noopener" 
-               class="btn btn-primary btn-lg">
-                🔴 Voir le live sur Facebook
-            </a>
+    <!-- Zone chargement -->
+    <div id="live-loading" class="spinner-wrap">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Chargement…</span>
         </div>
     </div>
 
-    <div class="d-flex justify-content-center align-items-center mt-4">
-        <a href="https://www.facebook.com/vbdompierre" target="_blank" rel="noopener" class="d-flex align-items-center text-decoration-none">
-            <img src="images/facebook_logo.png" alt="Logo Facebook du club" width="60" class="me-3" style="border-radius: 10%;">
-            <span class="fs-5 text-dark">Suivez notre page pour ne rien manquer !</span>
-        </a>
-    </div>
-</section>
+    <!-- Zone lives actifs (masquée au départ) -->
+    <section id="live-section" style="display:none;" aria-labelledby="live-heading">
+        <div class="status-bar">
+            <div class="badge-live"><span class="dot"></span> LIVE EN COURS</div>
+            <span id="live-count-label" class="text-muted small"></span>
+        </div>
 
-<section aria-labelledby="youtube-live-title" class="mt-5">
-    <h2 id="youtube-live-title" class="text-center mb-4">Live YouTube – VolleyBall Dompierre</h2>
-
-    <div id="live-container" class="d-flex justify-content-center">
-        <div class="p-4 border rounded shadow-sm text-center" style="max-width: 800px; width: 100%;">
-            
-            <!-- Zone dynamique -->
-            <div id="live-content">
-                <p class="text-center text-muted">Chargement du statut du live…</p>
+        <!-- Lecteur principal -->
+        <div class="main-player-label">
+            <span class="team-name" id="main-team-name"></span>
+            <span class="live-pill">LIVE</span>
+        </div>
+        <div class="main-player-wrap">
+            <div class="ratio ratio-16x9">
+                <iframe id="main-player"
+                        src=""
+                        title="Live YouTube"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                </iframe>
             </div>
+        </div>
 
-            <div class="mt-4">
-                <a href="https://www.youtube.com/@VolleyBallDompierresurHelpeA"
-                   target="_blank"
-                   rel="noopener"
-                   class="btn btn-danger btn-lg">
+        <!-- Miniatures (visibles seulement si > 1 live) -->
+        <div id="thumbs-container" class="thumbs-row" style="display:none;"></div>
+    </section>
+
+    <!-- Zone aucun live (masquée au départ) -->
+    <section id="no-live-section" style="display:none;" aria-labelledby="no-live-heading">
+        <div class="no-live-box">
+            <div class="icon">📺</div>
+            <h3 id="no-live-heading">Aucun live en ce moment</h3>
+            <p class="mb-4">Revenez lors d'un jour de match ou abonnez-vous à nos chaînes pour être notifié.</p>
+
+            <div class="channels-grid" id="channels-grid"></div>
+        </div>
+    </section>
+
+    <section aria-labelledby="youtube-live-title" class="mt-5">
+        <h2 id="youtube-live-title" class="text-center mb-4">YouTube – VolleyBall Dompierre</h2>
+
+            <div class="text-center">
+                <a href="https://www.youtube.com/@VolleyBallDompierresurHelpe"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-danger btn-lg">
                     ▶️ Aller sur la chaîne YouTube
                 </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-  </main>
 
-  <footer>
+</main>
+
+<footer>
     <div id="footer-placeholder"></div>
-  </footer>
+</footer>
 
-  <!-- SDK Facebook -->
-  <div id="fb-root"></div>
-  <script async defer crossorigin="anonymous"
-          src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v17.0">
-  </script>
+<button id="back-to-top" title="Retour en haut">
+    <svg class="progress-ring" width="60" height="60">
+        <circle class="progress-ring__background" cx="30" cy="30" r="26"/>
+        <circle class="progress-ring__circle" cx="30" cy="30" r="26"/>
+    </svg>
+    <span>&#8679;</span>
+</button>
 
-    <script>
-    const API_KEY = "AIzaSyCDXVrJnLwEOGTcJeRtvBJK-MsWx2bi0lw";
-    const CHANNEL_ID = "UC5s-uZuZifwvuuVujHY6ePQ";
+<script>
+// ── Configuration des chaînes ──────────────────────────────────────────────
+const API_KEY = "AIzaSyCDXVrJnLwEOGTcJeRtvBJK-MsWx2bi0lw";
 
-    async function checkLive() {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`;
+const CHANNELS = [
+    { id: "UC5s-uZuZifwvuuVujHY6ePQ", name: "Sénior A",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeA" },
+    { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
+    { id: "UCRk46QoaBZQPx38D1YX5UVA", name: "Sénior C",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeC" },
+    { id: "UCYG_J9PXD-oR5vzEMb8SW6g", name: "Sénior D",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeD" },
+    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFe" },
+];
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+function embedUrl(videoId) {
+    return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+}
+
+function buildChannelLinks() {
+    const grid = document.getElementById("channels-grid");
+    CHANNELS.forEach(ch => {
+        const a = document.createElement("a");
+        a.href = ch.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.className = "channel-link";
+        a.innerHTML = `
+            <svg class="yt-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z" fill="#FF0000"/>
+                <path d="M9.7 15.5l6.3-3.5-6.3-3.5v7z" fill="#fff"/>
+            </svg>
+            ${ch.name}
+        `;
+        grid.appendChild(a);
+    });
+}
+
+// ── Lecture d'un live dans le lecteur principal ────────────────────────────
+let currentVideoId = null;
+
+function loadMain(videoId, teamName) {
+    currentVideoId = videoId;
+    document.getElementById("main-player").src = embedUrl(videoId);
+    document.getElementById("main-team-name").textContent = teamName;
+
+    // Met à jour l'état actif sur les miniatures
+    document.querySelectorAll(".thumb-card").forEach(c => {
+        c.classList.toggle("active", c.dataset.videoId === videoId);
+    });
+}
+
+// ── Miniatures ─────────────────────────────────────────────────────────────
+function buildThumbs(lives) {
+    const container = document.getElementById("thumbs-container");
+    container.innerHTML = "";
+
+    lives.forEach(live => {
+        const card = document.createElement("div");
+        card.className = "thumb-card" + (live.videoId === currentVideoId ? " active" : "");
+        card.dataset.videoId = live.videoId;
+
+        card.innerHTML = `
+            <iframe
+                src="https://www.youtube.com/embed/${live.videoId}?mute=1&autoplay=0&controls=0&rel=0"
+                frameborder="0"
+                tabindex="-1"
+                aria-hidden="true">
+            </iframe>
+            <div class="thumb-label">
+                <span>${live.channelName}</span>
+                <span class="mini-pill">LIVE</span>
+            </div>
+        `;
+
+        card.addEventListener("click", () => loadMain(live.videoId, live.channelName));
+        container.appendChild(card);
+    });
+}
+
+// ── Vérification des lives ─────────────────────────────────────────────────
+async function checkAllLives() {
+    const lives = [];
+
+    await Promise.all(CHANNELS.map(async ch => {
         try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            const container = document.getElementById("live-content");
+            const url = `https://www.googleapis.com/youtube/v3/search`
+                + `?part=snippet&channelId=${ch.id}&eventType=live&type=video&key=${API_KEY}`;
+            const res  = await fetch(url);
+            const data = await res.json();
 
             if (data.items && data.items.length > 0) {
-                // Un live est en cours
-                const liveId = data.items[0].id.videoId;
-
-                container.innerHTML = `
-                    <div class="ratio ratio-16x9 mb-3">
-                        <iframe 
-                            src="https://www.youtube.com/embed/${liveId}"
-                            title="YouTube Live"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                    <h3 class="mb-3">Live en cours</h3>
-                    <p class="text-muted">Le match est actuellement diffusé en direct.</p>
-                `;
-            } else {
-                // Aucun live
-                container.innerHTML = `
-                    <h3 class="mb-3">Aucun live pour le moment</h3>
-                    <p class="text-muted">Revenez plus tard ou abonnez‑vous pour être notifié des prochains lives.</p>
-                `;
+                lives.push({
+                    videoId:     data.items[0].id.videoId,
+                    channelName: ch.name,
+                    channelId:   ch.id,
+                });
             }
-        } catch (error) {
-            console.error("Erreur API YouTube :", error);
-            document.getElementById("live-content").innerHTML =
-                "<p class='text-danger'>Impossible de vérifier le statut du live.</p>";
+        } catch (e) {
+            console.warn(`Erreur chaîne ${ch.name}:`, e);
         }
+    }));
+
+    return lives;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init() {
+    buildChannelLinks();
+
+    const lives = await checkAllLives();
+
+    document.getElementById("live-loading").style.display = "none";
+
+    if (lives.length === 0) {
+        document.getElementById("no-live-section").style.display = "block";
+        return;
     }
 
-    checkLive();
-    </script>
+    // Au moins 1 live
+    document.getElementById("live-section").style.display = "block";
 
-  <script src="script.js"></script>
+    const countLabel = document.getElementById("live-count-label");
+    countLabel.textContent = lives.length === 1
+        ? "1 équipe en direct"
+        : `${lives.length} équipes en direct simultanément`;
+
+    // Charger le 1er live dans le lecteur principal
+    loadMain(lives[0].videoId, lives[0].channelName);
+
+    // Afficher les miniatures seulement si plusieurs lives
+    if (lives.length > 1) {
+        buildThumbs(lives);
+        document.getElementById("thumbs-container").style.display = "flex";
+    }
+}
+
+init();
+</script>
+
+<script src="script.js"></script>
 </body>
 </html>
