@@ -98,6 +98,15 @@ document.addEventListener("DOMContentLoaded", () => {
         z-index:9999; cursor:pointer;
     `;
 
+    document.querySelectorAll(".team-link").forEach(link => {
+        link.style.cursor = "pointer";
+
+        link.addEventListener("click", () => {
+            const team = link.dataset.team;
+            window.location.href = `equipes/${team}.html`;
+        });
+    });
+
     const lbImg = document.createElement("img");
     lbImg.id = "lightbox-img";
     lbImg.style.cssText = "max-width:90%; max-height:90%; border-radius:10px;";
