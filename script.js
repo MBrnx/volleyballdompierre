@@ -415,15 +415,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Google Sheets ---
     async function loadData(sheetName) {
-    const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
-    const response = await fetch(url);
-    return await response.json();
+        const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
+        const response = await fetch(url);
+        return await response.json();
     }
 
     // --- Matchs à venir ---
     async function loadMatchsAvenir() {
     const container = document.querySelector("#avenir .list-group");
-    if (!container) return; // 🔥 Correction
+    if (!container) return;
 
     const data = await loadData("matchs_avenir");
     const filters = getFilters();
@@ -441,9 +441,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
         if (!filters.equipes.some(eq =>
-        row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
-        row.adversaire.toLowerCase().includes(eq.toLowerCase())
+            row.equipe.trim().toLowerCase() === eq.trim().toLowerCase() ||
+            row.adversaire.trim().toLowerCase() === eq.trim().toLowerCase()
         )) return false;
+
 
         if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
 
