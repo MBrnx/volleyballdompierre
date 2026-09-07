@@ -54,17 +54,32 @@
         border-bottom: none;
     }
 
-
     @media (max-width: 768px) {
         .team-header {
             flex-direction: column;
             text-align: center;
+            gap: 10px;
         }
 
         .team-photo {
             width: 100%;
             max-width: 350px;
             margin: 0 auto;
+        }
+
+        .team-info-text {
+            width: 100%;
+            text-align: center;
+        }
+
+        #players-list {
+            grid-template-columns: 1fr !important;
+            gap: 10px;
+        }
+
+        #players-list li {
+            border-bottom: 1px solid #198754;
+            padding: 10px 0;
         }
     }
 
