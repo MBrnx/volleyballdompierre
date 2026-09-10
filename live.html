@@ -45,10 +45,11 @@
                     https://unpkg.com
                     https://www.googleapis.com
                     https://region1.google-analytics.com
-                    https://www.google-analytics.com;     
+                    https://www.google-analytics.com
+                    https://ytb-vbd.wild-rice-d0a1.workers.dev;     
         style-src 'self' https://cdn.jsdelivr.net https://onesignal.com https://*.onesignal.com 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
-        frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
+        frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com;
     ">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -336,8 +337,6 @@
 
 <script>
 // ── Configuration des chaînes ──────────────────────────────────────────────
-const API_KEY = "AIzaSyCDXVrJnLwEOGTcJeRtvBJK-MsWx2bi0lw";
-
 const CHANNELS = [
     { id: "UC5s-uZuZifwvuuVujHY6ePQ", name: "Sénior A",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeA" },
     { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
@@ -414,26 +413,21 @@ function buildThumbs(lives) {
 
 // ── Vérification des lives ─────────────────────────────────────────────────
 async function checkAllLives() {
+    const url = "https://ytb-vbd.wild-rice-d0a1.workers.dev/";
+    const res = await fetch(url);
+    const data = await res.json();
+
     const lives = [];
 
-    await Promise.all(CHANNELS.map(async ch => {
-        try {
-            const url = `https://www.googleapis.com/youtube/v3/search`
-                + `?part=snippet&channelId=${ch.id}&eventType=live&type=video&key=${API_KEY}`;
-            const res  = await fetch(url);
-            const data = await res.json();
-
-            if (data.items && data.items.length > 0) {
-                lives.push({
-                    videoId:     data.items[0].id.videoId,
-                    channelName: ch.name,
-                    channelId:   ch.id,
-                });
-            }
-        } catch (e) {
-            console.warn(`Erreur chaîne ${ch.name}:`, e);
-        }
-    }));
+    if (data.items) {
+        data.items.forEach(item => {
+            lives.push({
+                videoId: item.id.videoId,
+                channelName: item.snippet.channelTitle,
+                channelId: item.snippet.channelId
+            });
+        });
+    }
 
     return lives;
 }
