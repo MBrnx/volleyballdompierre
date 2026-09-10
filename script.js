@@ -3,8 +3,113 @@ const SHEET_ID = "1wtpLYneJyQFe4-o90XLFzhWs2oXaWi6vhUMq55__d6o"; // ID de la feu
 const PAGE_ID = ""; 
 const ACCESS_TOKEN = "";
 
-document.addEventListener("DOMContentLoaded", () => {
+// ── Google Analytics + Bandeau consentement ────────────────────────────────
+const GA_ID = "G-7SFZM9TDFM";
 
+function loadGA() {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(s);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    gtag("config", GA_ID);
+}
+
+function setCookieConsent(value) {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `cookie_consent=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+}
+
+function getCookieConsent() {
+    return document.cookie.split("; ").find(r => r.startsWith("cookie_consent="))?.split("=")[1];
+}
+
+function createConsentBanner() {
+    const banner = document.createElement("div");
+    banner.id = "cookie-banner";
+    banner.innerHTML = `
+        <div id="cookie-banner-inner">
+            <p>
+                🍪 Ce site utilise Google Analytics pour mesurer l'audience.
+                Aucune donnée personnelle identifiable n'est collectée.
+                <a href="mentions-legales.html">En savoir plus</a>
+            </p>
+            <div id="cookie-banner-btns">
+                <button id="cookie-accept" class="btn btn-success btn-sm">Accepter</button>
+                <button id="cookie-refuse" class="btn btn-outline-secondary btn-sm">Refuser</button>
+            </div>
+        </div>
+    `;
+
+    // Styles inline pour être indépendant du CSS de la page
+    Object.assign(banner.style, {
+        position:        "fixed",
+        bottom:          "0",
+        left:            "0",
+        right:           "0",
+        background:      "#fff",
+        borderTop:       "1px solid #dee2e6",
+        boxShadow:       "0 -4px 16px rgba(0,0,0,.10)",
+        zIndex:          "9998",
+        padding:         "1rem 1.5rem",
+        fontFamily:      "Arial, sans-serif",
+        fontSize:        "0.9rem",
+    });
+
+    const inner = banner.querySelector("#cookie-banner-inner");
+    Object.assign(inner.style, {
+        maxWidth:        "900px",
+        margin:          "0 auto",
+        display:         "flex",
+        alignItems:      "center",
+        justifyContent:  "space-between",
+        gap:             "1rem",
+        flexWrap:        "wrap",
+    });
+
+    const p = banner.querySelector("p");
+    Object.assign(p.style, { margin: "0", flex: "1" });
+
+    const btns = banner.querySelector("#cookie-banner-btns");
+    Object.assign(btns.style, { display: "flex", gap: ".5rem", flexShrink: "0" });
+
+    document.body.appendChild(banner);
+
+    document.getElementById("cookie-accept").addEventListener("click", () => {
+        setCookieConsent("accepted");
+        banner.remove();
+        loadGA();
+    });
+
+    document.getElementById("cookie-refuse").addEventListener("click", () => {
+        setCookieConsent("refused");
+        banner.remove();
+    });
+}
+
+// Exécution au chargement
+(function initConsent() {
+    const consent = getCookieConsent();
+    if (consent === "accepted") {
+        loadGA();                  // déjà accepté → on charge GA directement
+    } else if (!consent) {
+        // Pas encore de choix → attendre le DOM pour afficher le bandeau
+        if (document.body) {
+            createConsentBanner();
+        } else {
+            document.addEventListener("DOMContentLoaded", createConsentBanner);
+        }
+    }
+    // Si "refused" → on ne fait rien, GA n'est jamais chargé
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+    
     // --- Navbar ---
     fetch("navbar.html")
     .then(response => response.text())
@@ -36,11 +141,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Footer ---
     fetch("footer.html")
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById("footer-placeholder").innerHTML = data;
-    })
-    .catch(error => console.error("Erreur de chargement du footer:", error));
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("footer-placeholder").innerHTML = data;
+
+            // ── Bouton "Gérer mes cookies" ───────────────────────────────
+            const manageBtn = document.getElementById("manage-cookies");
+            if (manageBtn) {
+                manageBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    // Efface le cookie de consentement
+                    document.cookie = "cookie_consent=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Lax";
+
+                    // Recharge la page → le bandeau réapparaît automatiquement
+                    location.reload();
+                });
+            }
+        })
+        .catch(error => console.error("Erreur de chargement du footer:", error));
+
 
     // --- Back to top ---
     const backToTopButton = document.getElementById("back-to-top");

@@ -36,7 +36,7 @@
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         img-src 'self' https: data:;
-        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is;
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is https://cdn.onesignal.com https://api.onesignal.com https://www.googletagmanager.com;
         connect-src 'self'
                     https://gateway.umami.is
                     https://gateway.umami.is/api
@@ -45,8 +45,10 @@
                     https://opensheet.elk.sh
                     https://cdn.jsdelivr.net
                     https://unpkg.com
-                    https://www.googleapis.com;          
-        style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+                    https://www.googleapis.com
+                    https://region1.google-analytics.com
+                    https://www.google-analytics.com;     
+        style-src 'self' https://cdn.jsdelivr.net https://onesignal.com https://*.onesignal.com 'unsafe-inline';
         font-src 'self' https://cdn.jsdelivr.net;
         frame-src https://www.facebook.com https://connect.facebook.net https://www.google.com https://maps.google.com;
     ">
@@ -118,32 +120,48 @@
 
     <section class="mb-5">
         <h2>4. Données personnelles</h2>
-        <p>
+            <p>
             Ce site ne collecte aucune donnée personnelle à des fins commerciales.
-        </p>
-        <p>
+            </p>
+            <p>
             Les seules données éventuellement transmises sont celles envoyées volontairement via les moyens de contact du club
             (email, formulaire, réseaux sociaux). Elles ne sont utilisées que pour répondre aux demandes.
-        </p>
-        <p>
+            </p>
+            <p>
             Conformément au RGPD, vous pouvez demander la suppression ou la modification de vos données en contactant le club à l’adresse suivante :
-            <strong>volleyballdompierre@gmail.com</strong>.
-        </p>
-        <p>
-            Le site utilise un outil de mesure d’audience respectueux de la vie privée (Umami Analytics).  
-            Aucun cookie n’est déposé et aucune donnée personnelle identifiable n’est collectée.
-        </p>
+            volleyballdompierre@gmail.com.
+            </p>
+            <p>
+            Le site utilise deux outils de mesure d’audience :
+            <br>- Umami Analytics, qui ne dépose aucun cookie et ne collecte aucune donnée personnelle identifiable.
+            <br>- Google Analytics, uniquement si vous acceptez les cookies via le bandeau de consentement affiché lors de votre première visite.
+            <br>Aucune donnée personnelle identifiable n’est collectée par ces outils.
+            </p>
+            <p>
+                Des données techniques (logs serveur) peuvent être enregistrées automatiquement par l’hébergeur pour assurer la sécurité du site. 
+                <br>Ces données ne permettent pas d’identifier un utilisateur et ne sont pas exploitées par le club.
+            </p>
     </section>
 
     <section class="mb-5">
         <h2>5. Cookies</h2>
-        <p>
-            Ce site n’utilise aucun cookie de suivi, de publicité ou d’analyse.
-        </p>
-        <p>
+            <p>
+            Ce site n’utilise aucun cookie de publicité ou de profilage.
+            </p>
+            <p>
+            Un cookie technique peut être déposé pour mémoriser votre choix concernant le bandeau de consentement (acceptation ou refus).
+            </p>
+            <p>
+            Google Analytics n’est chargé qu’en cas d’acceptation explicite de votre part. Si vous refusez, aucun cookie de mesure d’audience n’est déposé.
+            </p>
+            <p>
             Certains services externes intégrés (ex : Google Maps, Facebook) peuvent déposer leurs propres cookies.
             Ils sont soumis à leurs politiques respectives.
-        </p>
+            </p>
+            <p>
+            Vous pouvez retirer votre consentement à tout moment en cliquant sur “Gérer mes cookies” en bas de page.
+            </p>
+
     </section>
 
     <section class="mb-5">
@@ -160,8 +178,8 @@
             Le site peut être modifié à tout moment.
         </p>
         <p>
-            Le site utilise un outil de mesure d’audience respectueux de la vie privée (Umami Analytics). 
-            Aucune donnée personnelle identifiable n’est collectée et aucun cookie n’est déposé.
+            Le site utilise des outils de mesure d’audience (Umami Analytics et, avec consentement, Google Analytics).
+            Aucune donnée personnelle identifiable n’est collectée.
         </p>
     </section>
 

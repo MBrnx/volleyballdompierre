@@ -218,6 +218,15 @@ section#accueil {
     opacity: 0.8;
 }
 
+#manage-cookies {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+#manage-cookies:hover {
+    opacity: 1;
+}
+
 /* --- Horaires --- */
 div.card.card-horaire {
   background-color: #e9f5ef;
