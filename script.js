@@ -110,11 +110,13 @@ function createConsentBanner() {
 
 document.addEventListener("DOMContentLoaded", () => {
     
+    const basePath = window.location.pathname.includes("/equipes/") ? "../" : "";
+
     // --- Navbar ---
-    fetch("navbar.html")
+    fetch(basePath + "navbar.html")
     .then(response => response.text())
-    .then(data => {
-        document.getElementById("navbar-placeholder").innerHTML = data;
+    .then(html => {
+        document.getElementById("navbar-placeholder").innerHTML = html;
 
         const navbarCollapse = document.getElementById("navbarNav");
         const navbarToggler = document.querySelector(".navbar-toggler");
@@ -140,10 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => console.error("Erreur de chargement de la navbar:", error));
 
     // --- Footer ---
-    fetch("footer.html")
+    fetch(basePath + "footer.html")
         .then(response => response.text())
-        .then(data => {
-            document.getElementById("footer-placeholder").innerHTML = data;
+        .then(html => {
+            document.getElementById("footer-placeholder").innerHTML = html;
 
             // ── Bouton "Gérer mes cookies" ───────────────────────────────
             const manageBtn = document.getElementById("manage-cookies");

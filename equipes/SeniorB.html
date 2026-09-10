@@ -3,18 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Senior B</title>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7SFZM9TDFM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7SFZM9TDFM');
+    </script>
+
+    <!-- Script équipe -->
+    <script defer src="../script.js"></script>
     <script defer src="../script-equipe.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
-        .btn {
-        display: inline-block;
-        padding: 10px 15px;
-        background-color: #198754;
+    .btn-retour {
+        display: block;
+        width: 140px; /* largeur fixe */
+        margin: 20px auto;
+        background: #198754;
         color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-align: center;
+        line-height: 1.3;
+        font-weight: 500;
         text-decoration: none;
-        border-radius: 5px;
-        margin-top: 20px;
     }
 
     .btn:hover {
@@ -91,9 +113,17 @@
         }
     }
 
+
 </style>
 </head>
 <body>
+
+<!-- Navbar -->
+<header>
+    <div id="navbar-placeholder"></div>
+</header>
+
+<main>
 
 <h1 id="team-name" data-team="Dompierre B" style="text-align: center;">Sénior B (H)</h1>
 
@@ -116,7 +146,30 @@
     <ul id="players-list"></ul>
 </section>
 
+<a href="../equipe.html" class="btn-retour">Retour aux équipes</a>
 
-<a href="../equipe.html" class="btn btn-primary" style="display: block; margin: 20px auto; text-align: center; width: 20%;">Retour aux équipes</a>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div id="footer-placeholder"></div>
+</footer>
+
+<button id="back-to-top" title="Retour en haut">
+    <svg class="progress-ring" width="60" height="60">
+      <circle class="progress-ring__background" cx="30" cy="30" r="26" />
+      <circle class="progress-ring__circle" cx="30" cy="30" r="26" />
+    </svg>
+    <span>&#8679;</span>
+</button>
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-transparent border-0">
+        <img id="modalImage" src="" class="img-fluid rounded">
+      </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -1,5 +1,3 @@
-const SHEET_ID = "1wtpLYneJyQFe4-o90XLFzhWs2oXaWi6vhUMq55__d6o";
-
 async function loadSheet(sheetName) {
     const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
     const res = await fetch(url);
