@@ -76,12 +76,13 @@
 
         /* ── Page header ── */
         .live-hero {
-            background: linear-gradient(135deg, #198754 0%, #0d5c38 100%);
+            background: linear-gradient(135deg, #198754 0%, #198754 100%);
             color: #fff;
             padding: 2.5rem 1rem 2rem;
             text-align: center;
-            border-radius: 0 0 var(--radius) var(--radius);
-            margin-bottom: 2rem;
+            border-radius: 12px 12px var(--radius) var(--radius);
+            margin: 15px;
+            border: 10px solid rgba(0,0,0,.08);
         }
         .live-hero h1 {
             font-size: clamp(1.4rem, 4vw, 2.2rem);
@@ -153,42 +154,94 @@
         }
 
         /* ── Miniatures ── */
-        .thumbs-row {
-            display: flex;
-            gap: .75rem;
-            overflow-x: auto;
-            padding-bottom: .5rem;
-            scrollbar-width: thin;
-        }
         .thumb-card {
             flex: 0 0 180px;
             border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             background: var(--card-bg);
             box-shadow: 0 2px 8px rgba(0,0,0,.08);
-            transition: border-color .2s, transform .15s;
+            transition: border-color .2s, transform .15s, box-shadow .2s;
         }
-        .thumb-card:hover   { transform: translateY(-2px); border-color: var(--green); }
-        .thumb-card.active  { border-color: var(--yt-red); }
-        .thumb-card iframe  { display: block; width: 100%; height: 100px; pointer-events: none; }
-        .thumb-label {
-            padding: 6px 8px;
-            font-size: .78rem;
-            font-weight: 600;
-            color: #212529;
+
+        .thumb-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--green);
+            box-shadow: 0 4px 12px rgba(25,135,84,.25);
+        }
+
+        .thumb-card.active {
+            border-color: var(--yt-red);
+            box-shadow: 0 0 0 2px var(--yt-red), 0 4px 16px rgba(255,0,0,.3);
+        }
+
+        .thumb-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .thumb-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity .2s;
+        }
+
+        .thumb-card:hover .thumb-img-wrap img {
+            opacity: .8;
+        }
+
+        .thumb-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,.6);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            font-size: .8rem;
+            pointer-events: none;
+            transition: opacity .2s;
         }
-        .thumb-label .mini-pill {
+
+        .thumb-card.active .thumb-play-icon {
+            display: none; /* masqué sur le live actif */
+        }
+
+        /* Badge "EN COURS" sur la miniature active */
+        .thumb-en-cours {
+            display: none;
+            position: absolute;
+            top: 6px;
+            left: 6px;
             background: var(--yt-red);
             color: #fff;
             font-size: .65rem;
             font-weight: 700;
-            padding: 1px 6px;
+            padding: 2px 7px;
             border-radius: 4px;
+            letter-spacing: .06em;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+
+        .thumb-card.active .thumb-en-cours {
+            display: block;
+        }
+
+        /* Barre colorée en bas de la miniature active */
+        .thumb-card.active .thumb-label {
+            background: rgba(255,0,0,.08);
+            border-top: 2px solid var(--yt-red);
         }
 
         /* ── Aucun live ── */
@@ -336,27 +389,28 @@
 </button>
 
 <script>
-// ── Configuration des chaînes ──────────────────────────────────────────────
 const CHANNELS = [
-    { id: "UC5s-uZuZifwvuuVujHY6ePQ", name: "Sénior A",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeA" },
-    { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
-    { id: "UCRk46QoaBZQPx38D1YX5UVA", name: "Sénior C",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeC" },
-    { id: "UCYG_J9PXD-oR5vzEMb8SW6g", name: "Sénior D",         url: "https://www.youtube.com/@VolleyBallDompierresurHelpeD" },
-    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFe" },
+    { id: "UC5s-uZuZifwvuuVujHY6ePQ", name: "Sénior A",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeA" },
+    { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
+    { id: "UCRk46QoaBZQPx38D1YX5UVA", name: "Sénior C",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeC" },
+    { id: "UCYG_J9PXD-oR5vzEMb8SW6g", name: "Sénior D",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeD" },
+    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines A", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFe" },
+    { id: "UCYj7-P4c4AvRp4p0WgSmuhA", name: "Sénior Féminines B", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFeB" },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+const WORKER_URL = "https://ytb-vbd.wild-rice-d0a1.workers.dev/";
+
 function embedUrl(videoId) {
-    return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 }
 
 function buildChannelLinks() {
     const grid = document.getElementById("channels-grid");
     CHANNELS.forEach(ch => {
         const a = document.createElement("a");
-        a.href = ch.url;
-        a.target = "_blank";
-        a.rel = "noopener";
+        a.href      = ch.url;
+        a.target    = "_blank";
+        a.rel       = "noopener";
         a.className = "channel-link";
         a.innerHTML = `
             <svg class="yt-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -369,37 +423,36 @@ function buildChannelLinks() {
     });
 }
 
-// ── Lecture d'un live dans le lecteur principal ────────────────────────────
 let currentVideoId = null;
 
 function loadMain(videoId, teamName) {
     currentVideoId = videoId;
     document.getElementById("main-player").src = embedUrl(videoId);
     document.getElementById("main-team-name").textContent = teamName;
-
-    // Met à jour l'état actif sur les miniatures
     document.querySelectorAll(".thumb-card").forEach(c => {
         c.classList.toggle("active", c.dataset.videoId === videoId);
     });
 }
 
-// ── Miniatures ─────────────────────────────────────────────────────────────
 function buildThumbs(lives) {
     const container = document.getElementById("thumbs-container");
     container.innerHTML = "";
 
     lives.forEach(live => {
         const card = document.createElement("div");
-        card.className = "thumb-card" + (live.videoId === currentVideoId ? " active" : "");
+        card.className       = "thumb-card" + (live.videoId === currentVideoId ? " active" : "");
         card.dataset.videoId = live.videoId;
 
+        // Image fixe YouTube au lieu d'un iframe
         card.innerHTML = `
-            <iframe
-                src="https://www.youtube.com/embed/${live.videoId}?mute=1&autoplay=0&controls=0&rel=0"
-                frameborder="0"
-                tabindex="-1"
-                aria-hidden="true">
-            </iframe>
+            <div class="thumb-img-wrap">
+                <img
+                    src="https://i.ytimg.com/vi/${live.videoId}/mqdefault.jpg"
+                    alt="Live ${live.channelName}"
+                    loading="lazy">
+                <div class="thumb-play-icon">▶</div>
+                <div class="thumb-en-cours">EN COURS</div>
+            </div>
             <div class="thumb-label">
                 <span>${live.channelName}</span>
                 <span class="mini-pill">LIVE</span>
@@ -411,28 +464,18 @@ function buildThumbs(lives) {
     });
 }
 
-// ── Vérification des lives ─────────────────────────────────────────────────
 async function checkAllLives() {
-    const url = "https://ytb-vbd.wild-rice-d0a1.workers.dev/";
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const lives = [];
-
-    if (data.items) {
-        data.items.forEach(item => {
-            lives.push({
-                videoId: item.id.videoId,
-                channelName: item.snippet.channelTitle,
-                channelId: item.snippet.channelId
-            });
-        });
+    try {
+        const res  = await fetch(WORKER_URL);
+        const data = await res.json();
+        console.log("Réponse Worker:", JSON.stringify(data, null, 2));
+        return data.lives || [];
+    } catch (e) {
+        console.error("Erreur Worker:", e);
+        return [];
     }
-
-    return lives;
 }
 
-// ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
     buildChannelLinks();
 
@@ -445,18 +488,14 @@ async function init() {
         return;
     }
 
-    // Au moins 1 live
     document.getElementById("live-section").style.display = "block";
 
-    const countLabel = document.getElementById("live-count-label");
-    countLabel.textContent = lives.length === 1
+    document.getElementById("live-count-label").textContent = lives.length === 1
         ? "1 équipe en direct"
         : `${lives.length} équipes en direct simultanément`;
 
-    // Charger le 1er live dans le lecteur principal
     loadMain(lives[0].videoId, lives[0].channelName);
 
-    // Afficher les miniatures seulement si plusieurs lives
     if (lives.length > 1) {
         buildThumbs(lives);
         document.getElementById("thumbs-container").style.display = "flex";
