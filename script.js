@@ -62,34 +62,42 @@ function createConsentBanner() {
     });
 
     const inner = banner.querySelector("#cookie-banner-inner");
-    Object.assign(inner.style, {
-        maxWidth:        "900px",
-        margin:          "0 auto",
-        display:         "flex",
-        alignItems:      "center",
-        justifyContent:  "space-between",
-        gap:             "1rem",
-        flexWrap:        "wrap",
-    });
+    if (inner) {
+        Object.assign(inner.style, {
+            maxWidth:        "900px",
+            margin:          "0 auto",
+            display:         "flex",
+            alignItems:      "center",
+            justifyContent:  "space-between",
+            gap:             "1rem",
+            flexWrap:        "wrap",
+        });
+    }
 
     const p = banner.querySelector("p");
-    Object.assign(p.style, { margin: "0", flex: "1" });
+    if (p) Object.assign(p.style, { margin: "0", flex: "1" });
 
     const btns = banner.querySelector("#cookie-banner-btns");
-    Object.assign(btns.style, { display: "flex", gap: ".5rem", flexShrink: "0" });
+    if (btns) Object.assign(btns.style, { display: "flex", gap: ".5rem", flexShrink: "0" });
 
     document.body.appendChild(banner);
 
-    document.getElementById("cookie-accept").addEventListener("click", () => {
-        setCookieConsent("accepted");
-        banner.remove();
-        loadGA();
-    });
+    const acceptBtn = document.getElementById("cookie-accept");
+    if (acceptBtn) {
+        acceptBtn.addEventListener("click", () => {
+            setCookieConsent("accepted");
+            banner.remove();
+            loadGA();
+        });
+    }
 
-    document.getElementById("cookie-refuse").addEventListener("click", () => {
-        setCookieConsent("refused");
-        banner.remove();
-    });
+    const refuseBtn = document.getElementById("cookie-refuse");
+    if (refuseBtn) {
+        refuseBtn.addEventListener("click", () => {
+            setCookieConsent("refused");
+            banner.remove();
+        });
+    }
 }
 
 // Exécution au chargement
@@ -105,7 +113,6 @@ function createConsentBanner() {
             document.addEventListener("DOMContentLoaded", createConsentBanner);
         }
     }
-    // Si "refused" → on ne fait rien, GA n'est jamais chargé
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -113,93 +120,101 @@ document.addEventListener("DOMContentLoaded", () => {
     const basePath = window.location.pathname.includes("/equipes/") ? "../" : "";
 
     // --- Navbar ---
-    fetch(basePath + "navbar.html")
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById("navbar-placeholder").innerHTML = html;
-
-        const navbarCollapse = document.getElementById("navbarNav");
-        const navbarToggler = document.querySelector(".navbar-toggler");
-        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(navbarCollapse, { toggle: false });
-
-        document.addEventListener("click", (e) => {
-        if (!navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
-            if (navbarCollapse.classList.contains("show")) bsCollapse.hide();
-        }
-        });
-
-        navbarCollapse.addEventListener("hidden.bs.collapse", () => {
-        navbarCollapse.classList.remove("closing");
-        });
-
-        const navLinks = document.querySelectorAll(".nav-link");
-        navLinks.forEach(link => {
-        if (link.href === window.location.href) link.classList.add("active");
-        });
-
-        requestAnimationFrame(() => window.scrollTo(0, 0));
-    })
-    .catch(error => console.error("Erreur de chargement de la navbar:", error));
-
-    // --- Footer ---
-    fetch(basePath + "footer.html")
+    const navbarPlaceholder = document.getElementById("navbar-placeholder");
+    if (navbarPlaceholder) {
+        fetch(basePath + "navbar.html")
         .then(response => response.text())
         .then(html => {
-            document.getElementById("footer-placeholder").innerHTML = html;
+            navbarPlaceholder.innerHTML = html;
 
-            // ── Bouton "Gérer mes cookies" ───────────────────────────────
-            const manageBtn = document.getElementById("manage-cookies");
-            if (manageBtn) {
-                manageBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
+            const navbarCollapse = document.getElementById("navbarNav");
+            const navbarToggler = document.querySelector(".navbar-toggler");
+            
+            if (navbarCollapse && navbarToggler && typeof bootstrap !== "undefined") {
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(navbarCollapse, { toggle: false });
 
-                    // Efface le cookie de consentement
-                    document.cookie = "cookie_consent=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Lax";
+                document.addEventListener("click", (e) => {
+                    if (!navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
+                        if (navbarCollapse.classList.contains("show")) bsCollapse.hide();
+                    }
+                });
 
-                    // Recharge la page → le bandeau réapparaît automatiquement
-                    location.reload();
+                navbarCollapse.addEventListener("hidden.bs.collapse", () => {
+                    navbarCollapse.classList.remove("closing");
                 });
             }
-        })
-        .catch(error => console.error("Erreur de chargement du footer:", error));
 
+            const navLinks = document.querySelectorAll(".nav-link");
+            navLinks.forEach(link => {
+                if (link.href === window.location.href) link.classList.add("active");
+            });
+
+            requestAnimationFrame(() => window.scrollTo(0, 0));
+        })
+        .catch(error => console.error("Erreur de chargement de la navbar:", error));
+    }
+
+    // --- Footer ---
+    const footerPlaceholder = document.getElementById("footer-placeholder");
+    if (footerPlaceholder) {
+        fetch(basePath + "footer.html")
+            .then(response => response.text())
+            .then(html => {
+                footerPlaceholder.innerHTML = html;
+
+                // ── Bouton "Gérer mes cookies" ───────────────────────────────
+                const manageBtn = document.getElementById("manage-cookies");
+                if (manageBtn) {
+                    manageBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+
+                        // Efface le cookie de consentement
+                        document.cookie = "cookie_consent=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Lax";
+
+                        // Recharge la page → le bandeau réapparaît automatiquement
+                        location.reload();
+                    });
+                }
+            })
+            .catch(error => console.error("Erreur de chargement du footer:", error));
+    }
 
     // --- Back to top ---
     const backToTopButton = document.getElementById("back-to-top");
     const circle = document.querySelector(".progress-ring__circle");
 
-    if (circle) {
-    const radius = circle.r.baseVal.value;
-    const circumference = 2 * Math.PI * radius;
+    if (backToTopButton && circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
 
-    window.addEventListener("scroll", () => {
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrollPercent = scrollTop / scrollHeight;
-        const offset = circumference - scrollPercent * circumference;
+        window.addEventListener("scroll", () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = scrollTop / scrollHeight;
+            const offset = circumference - scrollPercent * circumference;
 
-        circle.style.strokeDashoffset = offset;
-        backToTopButton.style.display = scrollTop > 100 ? "flex" : "none";
-    });
+            circle.style.strokeDashoffset = offset;
+            backToTopButton.style.display = scrollTop > 100 ? "flex" : "none";
+        });
 
-    backToTopButton.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+        backToTopButton.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
     }
 
     // --- Scrollspy ---
     const navLinks = document.querySelectorAll(".nav-link");
 
     window.addEventListener("scroll", () => {
-    const scrollPos = window.scrollY + 200;
+        const scrollPos = window.scrollY + 200;
 
-    document.querySelectorAll("section").forEach(section => {
-        if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
-            navLinks.forEach(link => link.classList.remove("active"));
-            const activeLink = document.querySelector(`a[href="#${section.id}"]`);
-            if (activeLink) activeLink.classList.add("active");
-        }
-    });
+        document.querySelectorAll("section").forEach(section => {
+            if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+                navLinks.forEach(link => link.classList.remove("active"));
+                const activeLink = document.querySelector(`a[href="#${section.id}"]`);
+                if (activeLink) activeLink.classList.add("active");
+            }
+        });
     });
 
     // --- ACTUS LOCALES ---
@@ -268,20 +283,17 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseImages(imageField) {
         if (!imageField) return [];
 
-        // 1) On sépare les images (une par ligne, ou séparées par virgule)
         const rawImages = imageField
-            .split(/[,;\n\r]+/) // séparateurs autorisés
+            .split(/[,;\n\r]+/)
             .map(i => i.trim())
             .filter(i => i.length > 0);
 
-        // 2) On analyse chaque image individuellement
         return rawImages.map(i => {
-            // On sépare l’URL et le tag éventuel
             const parts = i.split("|").map(p => p.trim());
 
             return {
-                url: parts[0],            // l’URL propre
-                full: parts[1] === "full" // tag détecté
+                url: parts[0],
+                full: parts[1] === "full"
             };
         });
     }
@@ -302,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nbVisible = NB_PAR_PAGE;
 
         afficherActus();
-        updateLoadMoreButton(); 
+        updateLoadMoreButton();
     }
 
     function afficherActus() {
@@ -363,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function makeLinksClickable(text) {
+        if (!text) return "";
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return text.replace(urlRegex, url => {
             return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
@@ -393,12 +406,10 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }
 
-        // --- 1 seule image ---
         if (images.length === 1) {
             const hasText = content && content.trim().length > 0;
 
             if (hasText) {
-                // Texte à gauche, image à droite
                 card.innerHTML = `
                     <div class="actu-row d-flex flex-column flex-md-row align-items-stretch gap-3">
                         <div class="actu-texte flex-grow-1 single-image-text">
@@ -414,7 +425,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             } else {
-                // Pas de texte → image centrée, plus grande
                 card.innerHTML = `
                     <div class="text-center">
                         <div class="mb-2">
@@ -427,10 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             }
-        }
-
-        // --- Plusieurs images → sous le texte, en ligne
-        else {
+        } else {
             card.innerHTML = `
                 <div class="actu-row d-flex flex-column gap-3">
                     <div class="actu-texte">
@@ -450,11 +457,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         actusList.append(card);
 
-        // Lightbox sur toutes les images
-        card.querySelectorAll("img").forEach(img => enableLightbox(img));
+        card.querySelectorAll("img").forEach(img => {
+            img.onerror = () => {
+                const parent = img.closest(".actu-image-wrapper, .actu-image-single");
+                if (parent) {
+                    parent.style.display = "none";
+                } else {
+                    img.style.display = "none";
+                }
+            };
+            enableLightbox(img);
+        });
     }
-
-
 
     loadActus();
 
@@ -467,34 +481,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Sections ---
     function showSection(sectionId, btn) {
-        // Masquer toutes les sections
         document.querySelectorAll('.section-content').forEach(sec => sec.style.display = 'none');
-        document.getElementById(sectionId).style.display = 'block';
+        
+        const targetSec = document.getElementById(sectionId);
+        if (targetSec) targetSec.style.display = 'block';
 
-        // Mettre à jour le style des boutons principaux
         document.querySelectorAll('main button[data-section]').forEach(b => {
             b.classList.remove('btn-success');
             b.classList.add('btn-outline-success');
         });
 
-        btn.classList.remove('btn-outline-success');
-        btn.classList.add('btn-success');
+        if (btn) {
+            btn.classList.remove('btn-outline-success');
+            btn.classList.add('btn-success');
+        }
 
-        // Gestion du bouton Filtres
         const btnFiltres = document.getElementById("btn-filtres");
 
         if (sectionId === "evenements") {
-            // Pas de filtres sur Événements
             if (btnFiltres) btnFiltres.style.display = "none";
         }
         else if (sectionId === "classement") {
-            // Pas de filtres sur Classement
             if (btnFiltres) btnFiltres.style.display = "none";
 
-            // Charger le classement Excellence par défaut
             loadClassement("Classement_Avesnois");
 
-            // Activer le bon bouton interne
             document.querySelectorAll("#classement-tabs button").forEach(b => {
                 b.classList.remove("btn-success");
                 b.classList.add("btn-outline-success");
@@ -507,211 +518,221 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         else {
-            // Pour toutes les autres sections : filtres visibles
             if (btnFiltres) btnFiltres.style.display = "inline-block";
         }
-                // Pour toutes les sections qui utilisent les filtres (avenir + resultats)
-        if (sectionId === "avenir" || sectionId === "resultats") {
 
-            // Décocher toutes les équipes
+        if (sectionId === "avenir" || sectionId === "resultats") {
             document.querySelectorAll(".filter-equipe").forEach(cb => {
                 cb.checked = false;
             });
 
-            // Remettre le lieu sur "tous"
             const lieuTous = document.querySelector('input[name="filter-lieu"][value="tous"]');
             if (lieuTous) lieuTous.checked = true;
 
-            // Recharger les données
             loadMatchsAvenir();
             loadResultats();
         }
     }
 
+    const hash = window.location.hash.replace("#", "");
+    if (hash) {
+        const targetBtn = document.querySelector(`main button[data-section="${hash}"]`);
+        if (targetBtn) {
+            showSection(hash, targetBtn);
+        }
+    }
+
     document.querySelectorAll('main button[data-section]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const section = btn.getAttribute('data-section');
-        showSection(section, btn);
-    });
+        btn.addEventListener('click', () => {
+            const section = btn.getAttribute('data-section');
+            showSection(section, btn);
+        });
     });
 
-    // --- Google Sheets ---
+    // --- Google Sheets avec gestion des erreurs réseau ---
     async function loadData(sheetName) {
         const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
-        const response = await fetch(url);
-        return await response.json();
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        } catch (e) {
+            console.error(`Impossible de charger la feuille ${sheetName}:`, e);
+            return []; // Renvoie un tableau vide sécurisé
+        }
     }
 
     // --- Matchs à venir ---
     async function loadMatchsAvenir() {
-    const container = document.querySelector("#avenir .list-group");
-    if (!container) return;
+        const container = document.querySelector("#avenir .list-group");
+        if (!container) return;
 
-    const data = await loadData("matchs_avenir");
-    const filters = getFilters();
+        const data = await loadData("matchs_avenir");
+        const filters = getFilters();
 
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return da - db;
-    });
+        data.sort((a, b) => {
+            const da = new Date(a.date.split("/").reverse().join("-"));
+            const db = new Date(b.date.split("/").reverse().join("-"));
+            return da - db;
+        });
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
-    const filtered = data.filter(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+        const filtered = data.filter(row => {
+            if (!row.equipe || !row.adversaire) return false;
+            const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+            const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
-        if (!filters.equipes.some(eq =>
-            row.equipe.trim().toLowerCase() === eq.trim().toLowerCase() ||
-            row.adversaire.trim().toLowerCase() === eq.trim().toLowerCase()
-        )) return false;
+            if (!filters.equipes.some(eq =>
+                row.equipe.trim().toLowerCase() === eq.trim().toLowerCase() ||
+                row.adversaire.trim().toLowerCase() === eq.trim().toLowerCase()
+            )) return false;
 
+            if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
 
-        if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
+            return true;
+        });
 
-        return true;
-    });
-
-    if (filtered.length === 0) {
-        container.innerHTML = `
-        <div class="bg-light p-3 mt-3 border rounded text-center text-muted">
-            Aucun match à venir
-        </div>`;
-        return;
-    }
-
-    let currentDate = "";
-
-    filtered.forEach(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        if (row.date !== currentDate) {
-        currentDate = row.date;
-
-        container.innerHTML += `
-            <div class="day-separator mt-4 mb-2">
-            <div class="day-line"></div>
-            <h5 class="day-title text-primary">${currentDate}</h5>
-            <div class="day-line"></div>
+        if (filtered.length === 0) {
+            container.innerHTML = `
+            <div class="bg-light p-3 mt-3 border rounded text-center text-muted">
+                Aucun match à venir
             </div>`;
+            return;
         }
 
-        container.innerHTML += `
-        <div class="match-card border rounded p-3 mb-2">
-            <h6 class="mb-1">${row.equipe} – ${row.adversaire}</h6>
-            <p class="mb-1 text-muted">
-            ${row.heure} — <em>${row.matchs || ""}</em> — ${domExt}
-            </p>
-            <small class="text-secondary">${row.lieu}</small>
-        </div>`;
-    });
+        let currentDate = "";
+
+        filtered.forEach(row => {
+            const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+            const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+            if (row.date !== currentDate) {
+                currentDate = row.date;
+
+                container.innerHTML += `
+                    <div class="day-separator mt-4 mb-2">
+                        <div class="day-line"></div>
+                        <h5 class="day-title text-primary">${currentDate}</h5>
+                        <div class="day-line"></div>
+                    </div>`;
+            }
+
+            container.innerHTML += `
+            <div class="match-card border rounded p-3 mb-2">
+                <h6 class="mb-1">${row.equipe} – ${row.adversaire}</h6>
+                <p class="mb-1 text-muted">
+                ${row.heure || ""} — <em>${row.matchs || ""}</em> — ${domExt}
+                </p>
+                <small class="text-secondary">${row.lieu || ""}</small>
+            </div>`;
+        });
     }
 
     // --- Résultats ---
     async function loadResultats() {
-    const container = document.querySelector("#resultats .list-group");
-    if (!container) return; // 🔥 Correction
+        const container = document.querySelector("#resultats .list-group");
+        if (!container) return;
 
-    const data = await loadData("resultats");
-    const filters = getFilters();
+        const data = await loadData("resultats");
+        const filters = getFilters();
 
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return db - da;
-    });
+        data.sort((a, b) => {
+            const da = new Date(a.date.split("/").reverse().join("-"));
+            const db = new Date(b.date.split("/").reverse().join("-"));
+            return db - da;
+        });
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
-    const filtered = data.filter(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+        const filtered = data.filter(row => {
+            if (!row.equipe || !row.adversaire) return false;
+            const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+            const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
 
-        if (!filters.equipes.some(eq =>
-        row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
-        row.adversaire.toLowerCase().includes(eq.toLowerCase())
-        )) return false;
+            if (!filters.equipes.some(eq =>
+                row.equipe.toLowerCase().includes(eq.toLowerCase()) ||
+                row.adversaire.toLowerCase().includes(eq.toLowerCase())
+            )) return false;
 
-        if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
+            if (filters.lieu !== "tous" && filters.lieu !== domExt) return false;
 
-        return true;
-    });
+            return true;
+        });
 
-    if (filtered.length === 0) {
-        container.innerHTML = `
-        <li class="list-group-item text-center text-muted">
-            Aucun résultat disponible
-        </li>`;
-        return;
-    }
-
-    let currentDate = "";
-
-    filtered.forEach(row => {
-        const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
-        const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
-
-        if (row.date !== currentDate) {
-        currentDate = row.date;
-        container.innerHTML += `
-            <div class="bg-light p-2 mt-3 border rounded">
-            <strong>${currentDate}</strong>
-            </div>`;
+        if (filtered.length === 0) {
+            container.innerHTML = `
+            <li class="list-group-item text-center text-muted">
+                Aucun résultat disponible
+            </li>`;
+            return;
         }
 
-        container.innerHTML += `
-        <div class="list-group-item">
-            <h5>${row.equipe} ${row.score} ${row.adversaire}</h5>
-            <p>${row.resume || ""}</p>
-            <small class="text-muted">${domExt}</small>
-        </div>`;
-    });
+        let currentDate = "";
+
+        filtered.forEach(row => {
+            const lieuMatch = row.lieu ? row.lieu.toLowerCase() : "";
+            const domExt = lieuMatch.includes("dompierre") ? "domicile" : "extérieur";
+
+            if (row.date !== currentDate) {
+                currentDate = row.date;
+                container.innerHTML += `
+                    <div class="bg-light p-2 mt-3 border rounded">
+                        <strong>${currentDate}</strong>
+                    </div>`;
+            }
+
+            container.innerHTML += `
+            <div class="list-group-item">
+                <h5>${row.equipe} ${row.score || ""} ${row.adversaire}</h5>
+                <p>${row.resume || ""}</p>
+                <small class="text-muted">${domExt}</small>
+            </div>`;
+        });
     }
 
     // --- Événements ---
     async function loadEvenements() {
-    const container = document.querySelector("#evenements .list-group");
-    if (!container) return; // 🔥 Correction
+        const container = document.querySelector("#evenements .list-group");
+        if (!container) return;
 
-    const data = await loadData("evenements");
+        const data = await loadData("evenements");
 
-    data.sort((a, b) => {
-        const da = new Date(a.date.split("/").reverse().join("-"));
-        const db = new Date(b.date.split("/").reverse().join("-"));
-        return da - db;
-    });
+        data.sort((a, b) => {
+            const da = new Date(a.date.split("/").reverse().join("-"));
+            const db = new Date(b.date.split("/").reverse().join("-"));
+            return db - da;
+        });
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
-    if (data.length === 0) {
-        container.innerHTML = `
-        <li class="list-group-item text-center text-muted">
-            Aucun événement prévu
-        </li>`;
-        return;
-    }
-
-    let currentDate = "";
-
-    data.forEach(row => {
-        if (row.date !== currentDate) {
-        currentDate = row.date;
-        container.innerHTML += `
-            <div class="bg-light p-2 mt-3 border rounded">
-            <strong>${currentDate}</strong>
-            </div>`;
+        if (data.length === 0) {
+            container.innerHTML = `
+            <li class="list-group-item text-center text-muted">
+                Aucun événement prévu
+            </li>`;
+            return;
         }
 
-        container.innerHTML += `
-        <li class="list-group-item">
-            <strong>${row.titre}</strong><br>
-            <div class="event-description">
-                ${makeLinksClickable(row.description).replace(/\n/g, '<br>')}
-            </div>
-        </li>`;
-    });
+        let currentDate = "";
+
+        data.forEach(row => {
+            if (row.date !== currentDate) {
+                currentDate = row.date;
+                container.innerHTML += `
+                    <div class="bg-light p-2 mt-3 border rounded">
+                        <strong>${currentDate}</strong>
+                    </div>`;
+            }
+
+            container.innerHTML += `
+            <li class="list-group-item">
+                <strong>${row.titre || ""}</strong><br>
+                <div class="event-description">
+                    ${makeLinksClickable(row.description || "").replace(/\n/g, '<br>')}
+                </div>
+            </li>`;
+        });
     }
 
     // --- Classement ---
@@ -719,18 +740,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.querySelector("#classement .list-group");
         if (!container) return;
 
-        let data;
-        try {
-            data = await loadData(sheetName);
-        } catch (e) {
-            container.innerHTML = `
-                <li class="list-group-item text-center text-danger">
-                    Pas de données disponibles pour le moment
-                </li>`;
-            return;
-        }
+        const data = await loadData(sheetName);
 
-        if (!Array.isArray(data)) {
+        if (!Array.isArray(data) || data.length === 0) {
             container.innerHTML = `
                 <li class="list-group-item text-center text-danger">
                     Pas de données disponibles pour le moment
@@ -748,21 +760,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div>
                         <strong>${row.Rang}. ${row.Equipe}</strong><br>
                         <small class="text-muted">
-                            ${row.MJ} MJ — ${row.MG} MG — ${row.MP} MP — ${row.MB} MB
+                            ${row.MJ || 0} MJ — ${row.MG || 0} MG — ${row.MP || 0} MP — ${row.MB || 0} MB
                         </small>
                     </div>
-                    <span class="badge bg-primary rounded-pill">${row.Pts} pts</span>
+                    <span class="badge bg-primary rounded-pill">${row.Pts || 0} pts</span>
                 </li>
             `;
         });
     }
 
-
     document.querySelectorAll("#classement-tabs button").forEach(btn => {
         btn.addEventListener("click", () => {
             const sheet = btn.getAttribute("data-classement");
 
-            // Style des boutons
             document.querySelectorAll("#classement-tabs button").forEach(b => {
                 b.classList.remove("btn-success");
                 b.classList.add("btn-outline-success");
@@ -775,8 +785,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
-
     // --- Filtres ---
     function getFilters() {
         const equipeCheckboxes = document.querySelectorAll(".filter-equipe");
@@ -785,7 +793,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(cb => cb.checked)
             .map(cb => cb.value);
 
-        // Si aucune équipe n'est cochée → toutes les équipes sont sélectionnées
         if (selectedEquipes.length === 0) {
             selectedEquipes = Array.from(equipeCheckboxes).map(cb => cb.value);
         }
@@ -808,39 +815,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const zoneFiltres = document.getElementById("zone-filtres");
 
     if (btnFiltres && zoneFiltres) {
-    btnFiltres.addEventListener("click", () => {
-        const visible = zoneFiltres.style.display === "block";
-        zoneFiltres.style.display = visible ? "none" : "block";
-    });
+        btnFiltres.addEventListener("click", () => {
+            const visible = zoneFiltres.style.display === "block";
+            zoneFiltres.style.display = visible ? "none" : "block";
+        });
     }
 
     // --- Reset filtres ---
     const resetFiltres = document.getElementById("reset-filtres");
     if (resetFiltres) {
-    resetFiltres.addEventListener("click", () => {
-        document.querySelectorAll(".filter-equipe").forEach(cb => {
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change"));
+        resetFiltres.addEventListener("click", () => {
+            document.querySelectorAll(".filter-equipe").forEach(cb => {
+                cb.checked = true;
+                cb.dispatchEvent(new Event("change"));
+            });
+
+            const lieuTous = document.getElementById("lieuTous");
+            if (lieuTous) {
+                lieuTous.checked = true;
+                lieuTous.dispatchEvent(new Event("change"));
+            }
         });
-
-        const lieuTous = document.getElementById("lieuTous");
-        if (lieuTous) {
-        lieuTous.checked = true;
-        lieuTous.dispatchEvent(new Event("change"));
-        }
-    });
     }
-
-    // --- Chargement initial ---
-    loadMatchsAvenir();
-    loadResultats();
-    loadEvenements();
-    loadClassement("Classement_Avesnois");
 
     // --- Image cards ---
     document.querySelectorAll(".card-img-top").forEach(img => {
-
-        // Ignore les images vides
         if (!img.src || img.src.trim() === "") return;
 
         img.style.cursor = "pointer";
@@ -848,31 +847,33 @@ document.addEventListener("DOMContentLoaded", () => {
         img.setAttribute("data-bs-target", "#imageModal");
 
         img.addEventListener("click", () => {
-            document.getElementById('modalImage').src = img.src;
+            const modalImg = document.getElementById('modalImage');
+            if (modalImg) modalImg.src = img.src;
         });
     });
 
-    // --- Reset filtres au premier chargement ---
-    window.addEventListener("DOMContentLoaded", () => {
-
-        // Décocher toutes les équipes
-        document.querySelectorAll(".filter-equipe").forEach(cb => {
-            cb.checked = false;
-        });
-
-        // Lieu = tous
-        const lieuTous = document.querySelector('input[name="filter-lieu"][value="tous"]');
-        if (lieuTous) lieuTous.checked = true;
-
-        // Charger les données
-        loadMatchsAvenir();
-        loadResultats();
+    // --- Initialisation des filtres et chargement initial des données ---
+    document.querySelectorAll(".filter-equipe").forEach(cb => {
+        cb.checked = false;
     });
 
-    function changeMainLive(channelId) {
-        document.getElementById("mainLivePlayer").src =
-            "https://www.youtube.com/embed/live_stream?channel=" + channelId;
+    const lieuTous = document.querySelector('input[name="filter-lieu"][value="tous"]');
+    if (lieuTous) lieuTous.checked = true;
+
+    loadMatchsAvenir();
+    loadResultats();
+    loadEvenements();
+    loadClassement("Classement_Avesnois");
+
+});
+
+// --- Utilitaires globaux ---
+function changeMainLive(channelId) {
+    const mainPlayer = document.getElementById("mainLivePlayer");
+    if (mainPlayer) {
+        mainPlayer.src = "https://www.youtube.com/embed/live_stream?channel=" + channelId;
     }
+}
 
     /* // --- DARK MODE ---
 
@@ -926,5 +927,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- End of script.js ---
-
-});
