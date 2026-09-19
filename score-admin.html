@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marqueur Score - VBD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: #fff; font-family: sans-serif; }
+        .score-btn { font-size: 2rem; width: 100%; height: 80px; margin-bottom: 10px; border-radius: 12px; }
+        .score-display { font-size: 4rem; font-weight: bold; text-align: center; background: #222; border-radius: 12px; padding: 10px; }
+        .card-custom { background: #1e1e1e; border: 1px solid #333; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+    </style>
+</head>
+<body class="p-3">
+
+    <h2 class="text-center mb-3">Télécommande Score VBD</h2>
+
+    <!-- Configuration de la session -->
+    <div class="card-custom">
+        <div class="mb-3">
+            <label for="team-select" class="form-label">Équipe Dompierre :</label>
+            <select id="team-select" class="form-select bg-dark text-white">
+                <option value="" selected disabled>-- Choisir une équipe --</option>
+                <option value="senior-a">Sénior A</option>
+                <option value="senior-b">Sénior B</option>
+                <option value="senior-c">Sénior C</option>
+                <option value="senior-d">Sénior D</option>
+                <option value="femmes-a">Sénior Féminines A</option>
+                <option value="femmes-b">Sénior Féminines B</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="away-name" class="form-label">Nom Adversaire :</label>
+            <input type="text" id="away-name" class="form-control bg-dark text-white" placeholder="Nom du club adverse">
+        </div>
+        <div class="mb-3">
+            <label for="pin-code" class="form-label">Code PIN Sécurité :</label>
+            <input type="password" id="pin-code" class="form-control bg-dark text-white" placeholder="Code PIN (ex: 1234)">
+        </div>
+    </div>
+
+    <!-- Interface Marquage -->
+    <div class="row text-center mb-3">
+        <div class="col-6">
+            <h5>DOMPIERRE</h5>
+            <div id="disp-home" class="score-display text-success">0</div>
+            <button type="button" onclick="changeScore('home', 1)" class="btn btn-success score-btn mt-2">+1</button>
+            <button type="button" onclick="changeScore('home', -1)" class="btn btn-outline-danger w-100">-1</button>
+        </div>
+        <div class="col-6">
+            <h5 id="disp-away-title">ADVERSAIRE</h5>
+            <div id="disp-away" class="score-display text-warning">0</div>
+            <button type="button" onclick="changeScore('away', 1)" class="btn btn-warning score-btn mt-2">+1</button>
+            <button type="button" onclick="changeScore('away', -1)" class="btn btn-outline-danger w-100">-1</button>
+        </div>
+    </div>
+
+    <!-- Sets & Récapitulatif -->
+    <div class="card-custom">
+        <div class="row align-items-center mb-2">
+            <div class="col-6">
+                <label for="current-set">Set actuel (auto) :</label>
+                <input type="number" id="current-set" class="form-control bg-dark text-white" value="1" readonly>
+            </div>
+            <div class="col-6">
+                <label for="sets-summary">Score Sets (ex: 2-1) :</label>
+                <input type="text" id="sets-summary" class="form-control bg-dark text-white" value="0 - 0" placeholder="0 - 0">
+            </div>
+        </div>
+        
+        <button type="button" onclick="sendScore()" class="btn btn-success btn-lg w-100 mt-2">
+            💾 Enregistrer / Mettre à jour
+        </button>
+
+        <button type="button" onclick="resetMatchData()" class="btn btn-danger w-100 mt-2">
+            🔄 Remettre le match à 0
+        </button>
+        
+        <div id="status-msg" class="text-center mt-2 small"></div>
+    </div>
+
+<script>
+const WORKER_URL = "https://ytb-vbd.wild-rice-d0a1.workers.dev";
+let state = { homeScore: 0, awayScore: 0 };
+
+function calculateCurrentSet(setsSummary) {
+    if (!setsSummary || typeof setsSummary !== 'string') return 1;
+    const parts = setsSummary.split('-').map(s => parseInt(s.trim(), 10));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        const totalSetsPlayed = parts[0] + parts[1];
+        return Math.min(5, Math.max(1, totalSetsPlayed + 1));
+    }
+    return 1;
+}
+
+function updateSetDisplay() {
+    const setsSummaryInput = document.getElementById('sets-summary');
+    const currentSetInput = document.getElementById('current-set');
+    if (setsSummaryInput && currentSetInput) {
+        currentSetInput.value = calculateCurrentSet(setsSummaryInput.value);
+    }
+}
+
+function resetUI() {
+    state.homeScore = 0;
+    state.awayScore = 0;
+    document.getElementById('disp-home').textContent = "0";
+    document.getElementById('disp-away').textContent = "0";
+    document.getElementById('away-name').value = "ADVERSAIRE";
+    document.getElementById('disp-away-title').textContent = "ADVERSAIRE";
+    document.getElementById('current-set').value = "1";
+    document.getElementById('sets-summary').value = "0 - 0";
+}
+
+async function loadTeamData() {
+    const matchSelect = document.getElementById('team-select');
+    if (!matchSelect || !matchSelect.value) {
+        resetUI();
+        return;
+    }
+
+    const matchKey = matchSelect.value;
+
+    try {
+        const res = await fetch(`${WORKER_URL}/score?match=${matchKey}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+                state.homeScore = Number.isInteger(data.homeScore) ? data.homeScore : 0;
+                state.awayScore = Number.isInteger(data.awayScore) ? data.awayScore : 0;
+
+                document.getElementById('disp-home').textContent = state.homeScore;
+                document.getElementById('disp-away').textContent = state.awayScore;
+
+                const awayNameVal = data.awayName ? data.awayName.toUpperCase() : "ADVERSAIRE";
+                document.getElementById('away-name').value = awayNameVal;
+                document.getElementById('disp-away-title').textContent = awayNameVal;
+                
+                if (data.setsSummary) {
+                    document.getElementById('sets-summary').value = data.setsSummary;
+                }
+                updateSetDisplay();
+            } else {
+                resetUI();
+            }
+        }
+    } catch (e) {
+        console.warn("Erreur lors de la récupération des données :", e);
+    }
+}
+
+document.getElementById('away-name').addEventListener('input', (e) => {
+    document.getElementById('disp-away-title').textContent = e.target.value.trim().toUpperCase() || "ADVERSAIRE";
+});
+
+document.getElementById('sets-summary').addEventListener('input', updateSetDisplay);
+document.getElementById('team-select').addEventListener('change', loadTeamData);
+
+function changeScore(team, val) {
+    const matchSelect = document.getElementById('team-select');
+    const statusEl = document.getElementById('status-msg');
+
+    if (!matchSelect || !matchSelect.value) {
+        statusEl.textContent = "⚠️ Choisissez d'abord une équipe.";
+        statusEl.className = "text-center mt-2 small text-warning";
+        return;
+    }
+
+    if (team === 'home') {
+        state.homeScore = Math.max(0, state.homeScore + val);
+        document.getElementById('disp-home').textContent = state.homeScore;
+    } else {
+        state.awayScore = Math.max(0, state.awayScore + val);
+        document.getElementById('disp-away').textContent = state.awayScore;
+    }
+    sendScore();
+}
+
+async function sendScore() {
+    const matchSelect = document.getElementById('team-select');
+    const statusEl = document.getElementById('status-msg');
+
+    if (!matchSelect || !matchSelect.value) {
+        statusEl.textContent = "⚠️ Veuillez sélectionner une équipe";
+        statusEl.className = "text-center mt-2 small text-warning";
+        return;
+    }
+
+    const pin = document.getElementById('pin-code').value.trim();
+    if (!pin) {
+        statusEl.textContent = "❌ Entrez le code PIN";
+        statusEl.className = "text-center mt-2 small text-danger";
+        return;
+    }
+
+    const setsSummary = document.getElementById('sets-summary').value.trim() || "0 - 0";
+    const calculatedSet = calculateCurrentSet(setsSummary);
+    const awayNameVal = document.getElementById('away-name').value.trim().toUpperCase() || "ADVERSAIRE";
+
+    const payload = {
+        pin: pin,
+        matchKey: matchSelect.value,
+        homeScore: state.homeScore,
+        awayScore: state.awayScore,
+        awayName: awayNameVal,
+        currentSet: calculatedSet,
+        setsSummary: setsSummary
+    };
+
+    try {
+        const res = await fetch(`${WORKER_URL}/score`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            statusEl.textContent = "✅ Mis à jour en direct";
+            statusEl.className = "text-center mt-2 small text-success";
+        } else {
+            statusEl.textContent = "❌ " + (data.error || "Erreur de code PIN");
+            statusEl.className = "text-center mt-2 small text-danger";
+        }
+    } catch (e) {
+        statusEl.textContent = "❌ Erreur réseau";
+        statusEl.className = "text-center mt-2 small text-danger";
+    }
+}
+
+async function resetMatchData() {
+    const matchSelect = document.getElementById('team-select');
+    const statusEl = document.getElementById('status-msg');
+
+    if (!matchSelect || !matchSelect.value) {
+        statusEl.textContent = "⚠️ Sélectionnez une équipe à réinitialiser.";
+        statusEl.className = "text-center mt-2 small text-warning";
+        return;
+    }
+
+    if (!confirm("Voulez-vous vraiment remettre à zéro le match de cette équipe ?")) {
+        return;
+    }
+
+    resetUI();
+    await sendScore();
+}
+
+document.addEventListener("DOMContentLoaded", resetUI);
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Live Score - Volleyball Dompierre</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #fff; padding: 20px; margin: 0; }
+    h1 { text-align: center; font-size: 1.4rem; margin-bottom: 20px; }
+    .control-card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+    label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #cbd5e1; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }
+    input[readonly] { background: #1e293b; color: #94a3b8; border-color: #475569; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .team-box { background: #334155; padding: 15px; border-radius: 8px; text-align: center; }
+    .score-val { font-size: 2.5rem; font-weight: bold; margin: 10px 0; }
+    .btn { width: 100%; padding: 12px; margin: 4px 0; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+    .btn-plus { background: #10b981; color: #fff; }
+    .btn-minus { background: #ef4444; color: #fff; }
+    .btn-submit { background: #10b981; color: #fff; margin-top: 15px; }
+    .btn-reset { background: #dc2626; color: #fff; margin-top: 10px; }
+    .status-msg { margin-top: 15px; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
+    .status-success { background: #10b981; color: #fff; }
+    .status-error { background: #ef4444; color: #fff; }
+    .status-warning { background: #f59e0b; color: #000; }
+  </style>
+</head>
+<body>
+
+  <h1>Marqueur Live Score – VBD</h1>
+
+  <div class="control-card">
+    <label for="admin-pin">Code PIN Accès</label>
+    <input type="password" id="admin-pin" placeholder="Code PIN (ex: 1234)">
+
+    <label for="match-select">Équipe concernée</label>
+    <select id="match-select">
+      <option value="" selected disabled>-- Choisir une équipe --</option>
+      <option value="senior-a">Sénior A</option>
+      <option value="senior-b">Sénior B</option>
+      <option value="senior-c">Sénior C</option>
+      <option value="senior-d">Sénior D</option>
+      <option value="femmes-a">Sénior Féminines A</option>
+      <option value="femmes-b">Sénior Féminines B</option>
+    </select>
+
+    <label for="away-input">Nom Adversaire</label>
+    <input type="text" id="away-input" placeholder="Nom du club adverse">
+
+    <label for="sets-summary-input">Score des Sets (ex: 2 - 1)</label>
+    <input type="text" id="sets-summary-input" value="0 - 0" placeholder="0 - 0">
+
+    <label for="current-set-input">Set en cours (Calculé automatiquement)</label>
+    <input type="number" id="current-set-input" value="1" readonly>
+  </div>
+
+  <div class="grid">
+    <div class="team-box">
+      <h3>Dompierre</h3>
+      <div id="disp-home" class="score-val">0</div>
+      <button type="button" class="btn btn-plus" onclick="changeScore('home', 1)">+1</button>
+      <button type="button" class="btn btn-minus" onclick="changeScore('home', -1)">-1</button>
+    </div>
+
+    <div class="team-box">
+      <h3 id="disp-away-title">Adversaire</h3>
+      <div id="disp-away" class="score-val">0</div>
+      <button type="button" class="btn btn-plus" onclick="changeScore('away', 1)">+1</button>
+      <button type="button" class="btn btn-minus" onclick="changeScore('away', -1)">-1</button>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-submit" onclick="sendScore()">
+    💾 Enregistrer les modifications
+  </button>
+
+  <button type="button" class="btn btn-reset" onclick="resetMatchData()">
+    🔄 Remettre le match à 0
+  </button>
+
+  <div id="status-msg" class="status-msg"></div>
+
+<script>
+  const WORKER_URL = "https://ytb-vbd.wild-rice-d0a1.workers.dev";
+  let state = { homeScore: 0, awayScore: 0 };
+
+  function calculateCurrentSet(setsSummary) {
+    if (!setsSummary || typeof setsSummary !== 'string') return 1;
+    const parts = setsSummary.split('-').map(s => parseInt(s.trim(), 10));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      const totalSetsPlayed = parts[0] + parts[1];
+      return Math.min(5, Math.max(1, totalSetsPlayed + 1));
+    }
+    return 1;
+  }
+
+  function updateSetDisplay() {
+    const setsSummaryInput = document.getElementById('sets-summary-input');
+    const currentSetInput = document.getElementById('current-set-input');
+    if (setsSummaryInput && currentSetInput) {
+      currentSetInput.value = calculateCurrentSet(setsSummaryInput.value);
+    }
+  }
+
+  function resetToEmptyState() {
+    state.homeScore = 0;
+    state.awayScore = 0;
+
+    const dispHome = document.getElementById('disp-home');
+    const dispAway = document.getElementById('disp-away');
+    const awayInput = document.getElementById('away-input');
+    const dispAwayTitle = document.getElementById('disp-away-title');
+    const currentSetInput = document.getElementById('current-set-input');
+    const setsSummaryInput = document.getElementById('sets-summary-input');
+
+    if (dispHome) dispHome.textContent = "0";
+    if (dispAway) dispAway.textContent = "0";
+    if (awayInput) awayInput.value = "ADVERSAIRE";
+    if (dispAwayTitle) dispAwayTitle.textContent = "ADVERSAIRE";
+    if (setsSummaryInput) setsSummaryInput.value = "0 - 0";
+    if (currentSetInput) currentSetInput.value = "1";
+  }
+
+  async function loadTeamData() {
+    const matchEl = document.getElementById('match-select');
+    if (!matchEl || !matchEl.value) {
+      resetToEmptyState();
+      return;
+    }
+
+    const matchKey = matchEl.value;
+
+    try {
+      const res = await fetch(`${WORKER_URL}/score?match=${matchKey}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        state.homeScore = Number.isInteger(data.homeScore) ? data.homeScore : 0;
+        state.awayScore = Number.isInteger(data.awayScore) ? data.awayScore : 0;
+
+        const dispHome = document.getElementById('disp-home');
+        const dispAway = document.getElementById('disp-away');
+        if (dispHome) dispHome.textContent = state.homeScore;
+        if (dispAway) dispAway.textContent = state.awayScore;
+
+        const awayInput = document.getElementById('away-input');
+        const dispAwayTitle = document.getElementById('disp-away-title');
+        const setsSummaryInput = document.getElementById('sets-summary-input');
+
+        const currentAwayName = data.awayName ? data.awayName.toUpperCase() : "ADVERSAIRE";
+        if (awayInput) awayInput.value = currentAwayName;
+        if (dispAwayTitle) dispAwayTitle.textContent = currentAwayName;
+        if (setsSummaryInput) setsSummaryInput.value = data.setsSummary || "0 - 0";
+        
+        updateSetDisplay();
+      } else {
+        resetToEmptyState();
+      }
+    } catch (e) {
+      console.warn("Erreur lors de la récupération du score :", e);
+    }
+  }
+
+  function showStatus(message, type = 'success') {
+    const msgEl = document.getElementById('status-msg');
+    if (!msgEl) return;
+    
+    msgEl.textContent = message;
+    msgEl.className = 'status-msg status-' + type;
+    msgEl.style.display = 'block';
+
+    setTimeout(() => {
+      msgEl.style.display = 'none';
+    }, 3500);
+  }
+
+  function changeScore(team, delta) {
+    const matchEl = document.getElementById('match-select');
+    if (!matchEl || !matchEl.value) {
+      showStatus("⚠️ Choisissez d'abord une équipe dans la liste.", 'warning');
+      return;
+    }
+
+    if (team === 'home') state.homeScore = Math.max(0, state.homeScore + delta);
+    if (team === 'away') state.awayScore = Math.max(0, state.awayScore + delta);
+    
+    const dispHome = document.getElementById('disp-home');
+    const dispAway = document.getElementById('disp-away');
+    if (dispHome) dispHome.textContent = state.homeScore;
+    if (dispAway) dispAway.textContent = state.awayScore;
+    
+    sendScore();
+  }
+
+  async function sendScore() {
+    const pinEl = document.getElementById('admin-pin');
+    const matchEl = document.getElementById('match-select');
+    const awayNameEl = document.getElementById('away-input');
+    const setsSummaryEl = document.getElementById('sets-summary-input');
+
+    if (!matchEl || !matchEl.value) {
+      showStatus("⚠️ Choisissez d'abord une équipe dans la liste.", 'warning');
+      return;
+    }
+
+    if (!pinEl || !pinEl.value.trim()) {
+      showStatus("Saisissez le code PIN d'accès", 'error');
+      return;
+    }
+
+    const setsSummary = (setsSummaryEl && setsSummaryEl.value.trim()) ? setsSummaryEl.value.trim() : "0 - 0";
+    const calculatedSet = calculateCurrentSet(setsSummary);
+    const awayNameValue = (awayNameEl && awayNameEl.value.trim()) ? awayNameEl.value.trim().toUpperCase() : "ADVERSAIRE";
+
+    const payload = {
+      pin: pinEl.value.trim(),
+      matchKey: matchEl.value,
+      homeScore: state.homeScore,
+      awayScore: state.awayScore,
+      awayName: awayNameValue,
+      currentSet: calculatedSet,
+      setsSummary: setsSummary
+    };
+
+    try {
+      const res = await fetch(`${WORKER_URL}/score`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showStatus(data.error || "Erreur lors de l'enregistrement", 'error');
+      } else {
+        showStatus("Score enregistré avec succès !", 'success');
+      }
+    } catch (e) {
+      showStatus("Erreur réseau vers le serveur Worker", 'error');
+    }
+  }
+
+  async function resetMatchData() {
+    const matchEl = document.getElementById('match-select');
+    if (!matchEl || !matchEl.value) {
+      showStatus("⚠️ Choisissez d'abord une équipe à réinitialiser.", 'warning');
+      return;
+    }
+
+    if (!confirm("Voulez-vous vraiment remettre à zéro le match de cette équipe ?")) {
+      return;
+    }
+
+    resetToEmptyState();
+    await sendScore();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const matchSelect = document.getElementById('match-select');
+    const awayInput = document.getElementById('away-input');
+    const setsSummaryInput = document.getElementById('sets-summary-input');
+
+    if (matchSelect) matchSelect.addEventListener('change', loadTeamData);
+    if (setsSummaryInput) setsSummaryInput.addEventListener('input', updateSetDisplay);
+
+    if (awayInput) {
+      awayInput.addEventListener('input', (e) => {
+        const titleEl = document.getElementById('disp-away-title');
+        if (titleEl) {
+          titleEl.textContent = e.target.value.trim().toUpperCase() || "ADVERSAIRE";
+        }
+      });
+    }
+
+    resetToEmptyState();
+  });
+</script>
+</body>
+</html>

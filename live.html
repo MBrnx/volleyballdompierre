@@ -34,7 +34,7 @@
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         img-src 'self' https: data:;
-        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is https://cdn.onesignal.com https://api.onesignal.com https://www.googletagmanager.com;
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://connect.facebook.net https://cloud.umami.is https://cdn.onesignal.com https://api.onesignal.com https://www.googletagmanager.com https://www.youtube.com https://s.ytimg.com;
         connect-src 'self'
                     https://gateway.umami.is
                     https://gateway.umami.is/api
@@ -298,6 +298,145 @@
             .thumb-card { flex: 0 0 150px; }
             .thumb-card iframe { height: 85px; }
         }
+
+        /* --- MODULE LIVE OVERLAY --- */
+        .video-container {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        aspect-ratio: 16 / 9;
+        background-color: #000;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        }
+
+        /* Badge de score sur la vidéo */
+        .score-overlay {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        color: #ffffff;
+        font-family: system-ui, -apple-system, sans-serif;
+        user-select: none;
+        pointer-events: none;
+        }
+
+        .overlay-team {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        }
+
+        .team-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        }
+
+        .score-badge {
+        background: #e11d48;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        min-width: 28px;
+        text-align: center;
+        }
+
+        .overlay-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0 10px;
+        }
+
+        .set-info {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #fbbf24;
+        }
+
+        .sets-score {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        }
+
+        .fullscreen-btn {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        font-size: 1.2rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        }
+
+        .fullscreen-btn:hover {
+        background: rgba(225, 29, 72, 0.8);
+        }
+
+        @media (max-width: 600px) {
+        .score-overlay {
+            top: 8px;
+            left: 8px;
+            padding: 6px 10px;
+            gap: 8px;
+        }
+        .team-name {
+            font-size: 0.75rem;
+        }
+        .score-badge {
+            font-size: 0.9rem;
+            padding: 1px 6px;
+        }
+        }
+
+        /* Maintien de l'overlay au-dessus du composant en plein écran */
+        #video-container:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+
+        #video-container:fullscreen .score-overlay {
+            position: absolute;
+            z-index: 2147483647; /* Priorité maximale sur la couche plein écran */
+        }
+
+        #video-container:fullscreen .fullscreen-btn {
+            position: absolute;
+            z-index: 2147483647;
+        }
+
     </style>
 </head>
 
@@ -313,42 +452,66 @@
 
 <main class="container pb-5">
 
-    <!-- Zone chargement -->
+    <!-- Zone de chargement -->
     <div id="live-loading" class="spinner-wrap">
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Chargement…</span>
         </div>
     </div>
 
-    <!-- Zone lives actifs (masquée au départ) -->
-    <section id="live-section" style="display:none;" aria-labelledby="live-heading">
+    <!-- Zone lives actifs -->
+    <section id="live-section" class="live-section" style="display:none;">
+        
+        <!-- Barres de statut & nom de l'équipe active -->
         <div class="status-bar">
-            <div class="badge-live"><span class="dot"></span> LIVE EN COURS</div>
-            <span id="live-count-label" class="text-muted small"></span>
+            <span class="badge-live"><span class="dot"></span> EN DIRECT</span>
+            <span id="live-count-label" class="fw-bold text-success"></span>
         </div>
 
-        <!-- Lecteur principal -->
         <div class="main-player-label">
-            <span class="team-name" id="main-team-name"></span>
-            <span class="live-pill">LIVE</span>
-        </div>
-        <div class="main-player-wrap">
-            <div class="ratio ratio-16x9">
-                <iframe id="main-player"
-                        src=""
-                        title="Live YouTube"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                </iframe>
-            </div>
+            <span class="live-pill">EN DIRECT</span>
+            <span id="main-team-name" class="team-name">Chargement...</span>
         </div>
 
-        <!-- Miniatures (visibles seulement si > 1 live) -->
-        <div id="thumbs-container" class="thumbs-row" style="display:none;"></div>
+        <!-- Lecteur principal avec overlay -->
+        <div id="video-container" class="video-container">
+            
+            <iframe 
+                id="main-player" 
+                src="about:blank?fs=0" 
+                title="Flux Live Volleyball Dompierre" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+
+            <!-- Overlay de score -->
+            <div id="score-overlay" class="score-overlay">
+                <div class="overlay-team home">
+                    <span class="team-name">Dompierre</span>
+                    <span id="score-home" class="score-badge">0</span>
+                </div>
+                
+                <div class="overlay-details">
+                    <span id="set-info" class="set-info">Set 1</span>
+                    <span id="sets-score" class="sets-score">(0 - 0)</span>
+                </div>
+
+                <div class="overlay-team away">
+                    <span id="away-name" class="team-name">Adversaire</span>
+                    <span id="score-away" class="score-badge">0</span>
+                </div>
+            </div>
+
+            <button id="fullscreen-btn" class="fullscreen-btn" type="button" aria-label="Plein écran">
+                ⛶
+            </button>
+        </div>
+
+        <!-- Conteneur des miniatures (si 2 à 5 lives) -->
+        <div id="thumbs-container" class="thumbs-row d-flex gap-3 overflow-auto mt-4 pb-2" style="display:none;"></div>
     </section>
 
-    <!-- Zone aucun live (masquée au départ) -->
+    <!-- Zone aucun live -->
     <section id="no-live-section" style="display:none;" aria-labelledby="no-live-heading">
         <div class="no-live-box">
             <div class="icon">📺</div>
@@ -361,18 +524,15 @@
 
     <section aria-labelledby="youtube-live-title" class="mt-5">
         <h2 id="youtube-live-title" class="text-center mb-4">YouTube – VolleyBall Dompierre</h2>
-
-            <div class="text-center">
-                <a href="https://www.youtube.com/@VolleyBallDompierresurHelpe"
-                target="_blank"
-                rel="noopener"
-                class="btn btn-danger btn-lg">
-                    ▶️ Aller sur la chaîne YouTube
-                </a>
-            </div>
+        <div class="text-center">
+            <a href="https://www.youtube.com/@VolleyBallDompierresurHelpe"
+               target="_blank"
+               rel="noopener"
+               class="btn btn-danger btn-lg">
+                ▶️ Aller sur la chaîne YouTube
+            </a>
         </div>
     </section>
-
 
 </main>
 
@@ -388,144 +548,8 @@
     <span>&#8679;</span>
 </button>
 
-<script>
-const CHANNELS = [
-    { id: "UC5s-uZuZifwvuuVujHY6ePQ", name: "Sénior A",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeA" },
-    { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
-    { id: "UCRk46QoaBZQPx38D1YX5UVA", name: "Sénior C",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeC" },
-    { id: "UCYG_J9PXD-oR5vzEMb8SW6g", name: "Sénior D",           url: "https://www.youtube.com/@VolleyBallDompierresurHelpeD" },
-    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines A", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFe" },
-    { id: "UCYj7-P4c4AvRp4p0WgSmuhA", name: "Sénior Féminines B", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFeB" },
-];
-
-const WORKER_URL = "https://ytb-vbd.wild-rice-d0a1.workers.dev/";
-
-function embedUrl(videoId) {
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-}
-
-function buildChannelLinks() {
-    const grid = document.getElementById("channels-grid");
-    if (!grid) return;
-
-    grid.innerHTML = ""; // Réinitialisation de sécurité
-    CHANNELS.forEach(ch => {
-        const a = document.createElement("a");
-        a.href      = ch.url;
-        a.target    = "_blank";
-        a.rel       = "noopener";
-        a.className = "channel-link";
-        a.innerHTML = `
-            <svg class="yt-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z" fill="#FF0000"/>
-                <path d="M9.7 15.5l6.3-3.5-6.3-3.5v7z" fill="#fff"/>
-            </svg>
-            ${ch.name}
-        `;
-        grid.appendChild(a);
-    });
-}
-
-let currentVideoId = null;
-
-function loadMain(videoId, teamName) {
-    currentVideoId = videoId;
-    const mainPlayer = document.getElementById("main-player");
-    const mainTeamName = document.getElementById("main-team-name");
-
-    if (mainPlayer) mainPlayer.src = embedUrl(videoId);
-    if (mainTeamName) mainTeamName.textContent = teamName;
-
-    document.querySelectorAll(".thumb-card").forEach(c => {
-        c.classList.toggle("active", c.dataset.videoId === videoId);
-    });
-}
-
-function buildThumbs(lives) {
-    const container = document.getElementById("thumbs-container");
-    if (!container) return;
-    
-    container.innerHTML = "";
-
-    lives.forEach(live => {
-        const card = document.createElement("div");
-        card.className       = "thumb-card" + (live.videoId === currentVideoId ? " active" : "");
-        card.dataset.videoId = live.videoId;
-
-        card.innerHTML = `
-            <div class="thumb-img-wrap">
-                <img
-                    src="https://i.ytimg.com/vi/${live.videoId}/mqdefault.jpg"
-                    alt="Live ${live.channelName}"
-                    loading="lazy">
-                <div class="thumb-play-icon">▶</div>
-                <div class="thumb-en-cours">EN COURS</div>
-            </div>
-            <div class="thumb-label">
-                <span>${live.channelName}</span>
-                <span class="mini-pill">LIVE</span>
-            </div>
-        `;
-
-        card.addEventListener("click", () => loadMain(live.videoId, live.channelName));
-        container.appendChild(card);
-    });
-}
-
-async function checkAllLives() {
-    try {
-        const res  = await fetch(WORKER_URL);
-        const data = await res.json();
-        console.log("Réponse Worker:", JSON.stringify(data, null, 2));
-        return data.lives || [];
-    } catch (e) {
-        console.error("Erreur Worker:", e);
-        return [];
-    }
-}
-
-async function init() {
-    buildChannelLinks();
-
-    const lives = await checkAllLives();
-
-    const loader = document.getElementById("live-loading");
-    if (loader) loader.style.display = "none";
-
-    if (lives.length === 0) {
-        const noLiveSec = document.getElementById("no-live-section");
-        if (noLiveSec) noLiveSec.style.display = "block";
-        return;
-    }
-
-    const liveSec = document.getElementById("live-section");
-    if (liveSec) liveSec.style.display = "block";
-
-    const countLabel = document.getElementById("live-count-label");
-    if (countLabel) {
-        countLabel.textContent = lives.length === 1
-            ? "1 équipe en direct"
-            : `${lives.length} équipes en direct simultanément`;
-    }
-
-    loadMain(lives[0].videoId, lives[0].channelName);
-
-    if (lives.length > 1) {
-        buildThumbs(lives);
-        const thumbsContainer = document.getElementById("thumbs-container");
-        if (thumbsContainer) thumbsContainer.style.display = "flex";
-    }
-}
-
-// Lancement sécurisé au chargement du DOM
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-} else {
-    init();
-}
-
-</script>
-
+<script src="live.js"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
