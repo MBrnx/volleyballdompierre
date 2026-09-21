@@ -9,7 +9,7 @@ const CHANNELS = [
     { id: "UC2ZTwbLwwcxfIThKBoJGc7g", name: "Sénior B",           key: "senior-b", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeB" },
     { id: "UCRk46QoaBZQPx38D1YX5UVA", name: "Sénior C",           key: "senior-c", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeC" },
     { id: "UCYG_J9PXD-oR5vzEMb8SW6g", name: "Sénior D",           key: "senior-d", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeD" },
-    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines A", key: "femmes-a", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFe" },
+    { id: "UCfSWqmK7M_fRx67tOPLq7XQ", name: "Sénior Féminines A", key: "femmes-a", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFeA" },
     { id: "UCYj7-P4c4AvRp4p0WgSmuhA", name: "Sénior Féminines B", key: "femmes-b", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFeB" }
 ];
 
