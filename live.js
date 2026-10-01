@@ -13,7 +13,11 @@ const CHANNELS = [
     { id: "UCYj7-P4c4AvRp4p0WgSmuhA", name: "Sénior Féminines B", key: "femmes-b", url: "https://www.youtube.com/@VolleyBallDompierresurHelpeFeB" }
 ];
 
-/*// Flux de secours (Lives de test 24/24)
+// Pour la production (désactiver les vidéos de test) :
+const FALLBACK_TEST_LIVES = [];
+
+/*
+// Flux de secours (Lives de test 24/24)
 const FALLBACK_TEST_LIVES = [
     { videoId: "a47ckXKZjxI", channelId: "UC5s-uZuZifwvuuVujHY6ePQ" }, // Sénior A
     { videoId: "NiRIbKwAejk", channelId: "UCfSWqmK7M_fRx67tOPLq7XQ" }  // Sénior Féminines A
@@ -118,16 +122,22 @@ function buildThumbs(lives) {
     });
 }
 
-// 6. INTERROGATION DU WORKER (DETECTION DES FLUX)
 async function checkAllLives() {
+    // Vérification de sécurité au cas où la variable ne serait pas déclarée
+    const fallbackList = (typeof FALLBACK_TEST_LIVES !== "undefined") ? FALLBACK_TEST_LIVES : [];
+
     try {
         const res = await fetch(WORKER_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
-        const rawLives = data.lives || [];
+        let rawLives = data.lives || [];
 
-        // Traitement direct des vrais lives remontés par le Worker
+        // Injection des vidéos de test uniquement si la liste de fallback contient des éléments
+        if (rawLives.length === 0 && fallbackList.length > 0) {
+            rawLives = fallbackList;
+        }
+
         return rawLives.map(live => {
             const channelMatch = CHANNELS.find(c => c.id === live.channelId);
             return {
@@ -138,9 +148,16 @@ async function checkAllLives() {
         });
 
     } catch (e) {
-        console.warn("Aucun live détecté ou Worker indisponible.", e);
-        // On retourne un tableau vide en production
-        return [];
+        console.warn("Aucun live détecté ou Worker indisponible. Passage sur le mode secours.", e);
+
+        return fallbackList.map(live => {
+            const channelMatch = CHANNELS.find(c => c.id === live.channelId);
+            return {
+                videoId: live.videoId,
+                channelId: live.channelId,
+                teamName: channelMatch ? channelMatch.name : "Équipe Dompierre (Test)"
+            };
+        });
     }
 }
 
@@ -185,6 +202,39 @@ async function fetchLiveScore() {
     }
 }
 
+// Fonctions de gestion du plein écran hybride (PC / Android / iOS)
+function enableCssFullscreen(container) {
+    container.classList.add("live-fullscreen-active");
+    document.body.classList.add("no-scroll");
+}
+
+function disableCssFullscreen(container) {
+    container.classList.remove("live-fullscreen-active");
+    document.body.classList.remove("no-scroll");
+}
+
+function toggleFullscreen(container) {
+    const isNativeFs = document.fullscreenElement || document.webkitFullscreenElement;
+    const isCssFs = container.classList.contains("live-fullscreen-active");
+
+    if (!isNativeFs && !isCssFs) {
+        if (container.requestFullscreen) {
+            container.requestFullscreen().catch(() => enableCssFullscreen(container));
+        } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+        } else {
+            enableCssFullscreen(container);
+        }
+    } else {
+        if (document.exitFullscreen && isNativeFs) {
+            document.exitFullscreen().catch(() => disableCssFullscreen(container));
+        } else if (document.webkitExitFullscreen && isNativeFs) {
+            document.webkitExitFullscreen();
+        }
+        disableCssFullscreen(container);
+    }
+}
+
 // 8. INITIALISATION GLOBALE DU MODULE
 async function initLiveModule() {
     buildChannelLinks();
@@ -194,12 +244,16 @@ async function initLiveModule() {
 
     if (fullscreenBtn && videoContainer) {
         fullscreenBtn.addEventListener("click", () => {
-            if (!document.fullscreenElement) {
-                if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
-                else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            toggleFullscreen(videoContainer);
+        });
+
+        // Réinitialisation si la sortie du plein écran se fait par un geste système
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) disableCssFullscreen(videoContainer);
+        });
+        document.addEventListener("webkitfullscreenchange", () => {
+            if (!document.webkitDisplayingFullscreen && !document.webkitFullscreenElement) {
+                disableCssFullscreen(videoContainer);
             }
         });
     }
